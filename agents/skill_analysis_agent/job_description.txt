@@ -1,0 +1,30 @@
+**Job Title: Senior Python Developer**
+
+**Location:** San Francisco, CA (Hybrid)
+
+**Job Summary:**
+We are seeking an experienced Senior Python Developer to join our dynamic team. The ideal candidate will have a strong background in building scalable and reliable backend services, a passion for clean code, and a proven track record of working with modern web technologies. You will be responsible for designing, developing, and maintaining our core applications, working closely with product managers and other engineers.
+
+**Key Responsibilities:**
+- Design, build, and maintain efficient, reusable, and reliable Python code.
+- Develop and integrate user-facing elements with server-side logic.
+- Implement and maintain APIs and backend services.
+- Collaborate with front-end developers to integrate user-facing elements with server-side logic.
+- Optimize applications for maximum speed and scalability.
+- Write unit and integration tests to ensure code quality.
+- Work with cloud services and containerization technologies.
+
+**Required Skills and Qualifications:**
+- 5+ years of professional experience in software development.
+- Expert in Python with knowledge of at least one Python web framework like Django, Flask, or FastAPI.
+- Strong understanding of front-end technologies, such as JavaScript, HTML5, and CSS3.
+- Experience with relational databases (e.g., PostgreSQL, MySQL) and NoSQL databases (e.g., MongoDB).
+- Proficient with Git and version control workflows.
+- Experience with cloud platforms like AWS, Google Cloud, or Azure.
+- Familiarity with containerization technologies like Docker and Kubernetes.
+
+**Preferred Skills:**
+- Experience with CI/CD pipelines.
+- Knowledge of microservices architecture.
+- Strong problem-solving skills and attention to detail.
+- Excellent communication and teamwork skills.
