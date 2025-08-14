@@ -24,3 +24,8 @@ accelerate
 BeautifulSoup4
 PyPDF2
 requests
+langchain-google-genai
+chromadb
+langchain_chroma
+pymupdf
+langchain-huggingface
