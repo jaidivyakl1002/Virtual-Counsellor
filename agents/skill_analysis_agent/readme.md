@@ -1,8 +1,8 @@
 setting up skill analysis agent
 
-update the path of vector store persisted directory
-update the path of job_description.txt
-update the path of resume pdf
+update the path to your vector store persisted directory
+update the path to your job_description.txt
+add your resume and update the path to your resume pdf
 
 .env
 GITHUB_TOKEN

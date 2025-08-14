@@ -4,7 +4,6 @@ from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, ToolMe
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.document_loaders import PyMuPDFLoader, TextLoader
 from langchain_core.tools import tool
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langgraph.graph.message import add_messages
 from langgraph.graph import StateGraph, END
@@ -25,83 +24,14 @@ os.environ["LANGSMITH_API_KEY"]=LANGSMITH_API
 os.environ["LANGSMITH_PROJECT"]="virtual_counsellor"
 
 
-# --- Pydantic Models for Structured Output ---
-class SkillMatch(BaseModel):
-    """Skills that match between CV and job requirements"""
-    technical_skills: List[str] = Field(description="Technical skills that match")
-    soft_skills: List[str] = Field(description="Soft skills that match")
-    certifications: List[str] = Field(description="Relevant certifications found")
-
-class SkillGap(BaseModel):
-    """Skills that are missing from the CV"""
-    technical_skills_missing: List[str] = Field(description="Technical skills required but missing")
-    soft_skills_missing: List[str] = Field(description="Soft skills required but missing")
-    certifications_missing: List[str] = Field(description="Required certifications missing")
-    priority_level: str = Field(description="Priority level: High, Medium, Low")
-
-class ExperienceAnalysis(BaseModel):
-    """Experience comparison analysis"""
-    years_required: str = Field(description="Years of experience required by job")
-    years_candidate_has: str = Field(description="Years of experience candidate has")
-    experience_match_percentage: int = Field(description="Percentage match of experience (0-100)")
-    relevant_experience: List[str] = Field(description="List of relevant experience areas")
-    experience_gaps: List[str] = Field(description="Areas where experience is lacking")
-
-class Recommendation(BaseModel):
-    """Specific recommendations for the candidate"""
-    immediate_actions: List[str] = Field(description="Actions to take immediately (next 1-3 months)")
-    short_term_goals: List[str] = Field(description="Goals for next 6-12 months")
-    learning_resources: List[str] = Field(description="Specific courses, books, or resources to bridge gaps")
-    projects_to_build: List[str] = Field(description="Project ideas to demonstrate missing skills")
-
-class SkillGapAnalysisReport(BaseModel):
-    """Complete skill gap analysis report"""
-    job_title: str = Field(description="Title of the job being analyzed")
-    overall_match_score: int = Field(description="Overall match percentage (0-100)")
-    skills_match: SkillMatch
-    skills_gap: SkillGap
-    experience_analysis: ExperienceAnalysis
-    recommendations: Recommendation
-    summary: str = Field(description="Executive summary of the analysis")
-    candidate_readiness: str = Field(description="Ready/Nearly Ready/Needs Development/Not Ready")
-
 # --- LLM and Embeddings Configuration ---
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", api_key=GEMINI_API, temperature=0.1)
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 # Create structured LLM
 structured_llm = llm.with_structured_output(SkillGapAnalysisReport)
 
 # --- File Paths ---
 pdf_path = "/home/sarthak/Desktop/skill_analysis_agent/Sarthak Choudhary (1).pdf"
-job_description_path = "/home/sarthak/Desktop/skill_analysis_agent/job_description.txt"
-persist_directory = r"/home/sarthak/Desktop/skill_analysis_agent/chroma_db"
-collection_name = "cv_collection"
-
-# --- CV Loading and Vector Store Setup ---
-@traceable
-def setup_vector_store():
-    """Loads the CV, splits it into chunks, and creates a Chroma vector store."""
-    pdf_loader = PyMuPDFLoader(pdf_path)
-    pages = pdf_loader.load()
-
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-    pages_split = text_splitter.split_documents(pages)
-
-    if not os.path.exists(persist_directory):
-        os.makedirs(persist_directory)
-
-    vectorstore = Chroma.from_documents(
-        documents=pages_split,
-        embedding=embeddings,
-        persist_directory=persist_directory,
-        collection_name=collection_name
-    )
-    print("Created and loaded ChromaDB vector store for the CV.")
-    return vectorstore
-
-vectorstore = setup_vector_store()
-retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k": 10})
 
 # --- Tools Definition ---
 @tool
@@ -132,8 +62,8 @@ def read_job_description(query: str) -> str:
 # --- Agent State and Graph Definition ---
 class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], add_messages]
-    job_description: str
-    cv_information: str
+    cv_information: str,
+    github_information: Dict[Any,Any],
     analysis_complete: bool
 
 agent_tools = [retrieve_cv_information, read_job_description]
