@@ -2,6 +2,9 @@ langchain
 langgraph
 langsmith
 langchain-community
+langchain-google-genai
+google-generativeai
+langchain-core
 pypdf
 python-dotenv
 openai
@@ -24,3 +27,5 @@ accelerate
 BeautifulSoup4
 PyPDF2
 requests
+pymupdf
+IPython
