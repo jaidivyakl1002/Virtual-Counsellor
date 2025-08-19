@@ -2,6 +2,9 @@ langchain
 langgraph
 langsmith
 langchain-community
+langchain-google-genai
+google-generativeai
+langchain-core
 pypdf
 python-dotenv
 openai
@@ -29,3 +32,4 @@ chromadb
 langchain_chroma
 pymupdf
 langchain-huggingface
+
