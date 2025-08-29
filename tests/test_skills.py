@@ -334,7 +334,7 @@ def main():
     """Main execution function with example usage"""
     
     # Configuration
-    RESUME_PATH = r"C:\Users\Jaidivya Kumar Lohan\Downloads\Resume.pdf"
+    RESUME_PATH = r""
     
     # Optional: Add additional context data
     user_context = {
@@ -366,7 +366,7 @@ def main():
         # Run the workflow
         print("Starting workflow execution...")
         result = runner.run_workflow(
-            resume_pdf_path=r"C:\Users\Jaidivya Kumar Lohan\Downloads\Resume.pdf",
+            resume_pdf_path=RESUME_PATH,
             initial_message="I want comprehensive career analysis and skill development recommendations. Please analyze my profile and provide actionable guidance.",
             user_context=user_context
         )
