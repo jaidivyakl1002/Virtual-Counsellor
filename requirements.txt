@@ -32,3 +32,5 @@ chromadb
 langchain_chroma
 pymupdf
 langchain-huggingface
+crawl4ai
+python-jobspy

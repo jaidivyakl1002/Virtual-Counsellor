@@ -10,21 +10,25 @@ from crawl4ai import DefaultMarkdownGenerator, PruningContentFilter
 from jobspy import scrape_jobs
 import time
 
-class NaukriJobScraper:
-    def __init__(self):
+class JobScraper:
+    def __init__(self,site_name:str,job_card_selector:str,jd_card_selector:str):
         self.browser_config = BrowserConfig(
             headless=True,
             viewport_height=1200,
             viewport_width=1920,
             user_agent_mode="random"
         )
+
+        self.site_name = site_name
+        self.job_card_selector = job_card_selector
+        self.jd_card_selector = jd_card_selector
         
     async def scrape_job_urls(self, search_term="python", location="India", results_wanted=50):
         """Scrape job URLs using jobspy"""
         print(f"Scraping {results_wanted} job URLs for '{search_term}' in {location}...")
         
         jobs = scrape_jobs(
-            site_name=["glassdoor"],
+            site_name=[self.site_name],
             search_term=search_term,
             location=location,
             results_wanted=results_wanted,
@@ -68,8 +72,7 @@ class NaukriJobScraper:
                 crawler_config = CrawlerRunConfig(
                     cache_mode=CacheMode.BYPASS,
                     # Target the main job description container
-                    css_selector=".JobDetails_jobDetailsHeaderWrapper__JlXWG",
-                  
+                    css_selector=self.job_card_selector,
                     markdown_generator=DefaultMarkdownGenerator(
                         content_filter=PruningContentFilter(
                             threshold=0.3,
@@ -82,7 +85,7 @@ class NaukriJobScraper:
                         }
                     ),    
                     page_timeout=30000,
-                    wait_for=".JobDetails_jobDetailsHeaderWrapper__JlXWG"
+                    wait_for="css:" + self.job_card_selector
                 )
                 
                 result = await crawler.arun(url=url, config=crawler_config)
@@ -101,7 +104,7 @@ class NaukriJobScraper:
                     cache_mode=CacheMode.BYPASS,
                     # Target the main job description container
 
-                    css_selector=".JobDetails_jobDescription__uW_fK",
+                    css_selector=self.jd_card_selector,
                     markdown_generator=DefaultMarkdownGenerator(
                         content_filter=PruningContentFilter(
                             threshold=0.3,
@@ -115,7 +118,7 @@ class NaukriJobScraper:
                     ),
                     
                     page_timeout=30000,
-                    wait_for="css:.JobDetails_jobDescription__uW_fK"
+                    wait_for="css:"+self.jd_card_selector
                 )
                 
                 result = await crawler.arun(url=url, config=crawler_config)
@@ -257,12 +260,22 @@ class NaukriJobScraper:
 
 async def main():
     """Main function to run the complete job scraping pipeline"""
-    scraper = NaukriJobScraper()
+    glassdoor_scraper = JobScraper(
+                site_name='glassdoor',
+                job_card_selector=".JobDetails_jobDetailsHeaderWrapper__JlXWG",
+                jd_card_selector = ".JobDetails_jobDescription__uW_fK"
+            )
+
+    naukri_scraper = JobScraper(
+                site_name='naukri',
+                job_card_selector=".styles_job-header-container___0wLZ",
+                jd_card_selector = ".styles_job-desc-container__txpYf"
+            )
     
     try:
         # Step 1: Get job URLs
         print("=== Step 1: Scraping Job URLs ===")
-        job_urls = await scraper.scrape_job_urls(
+        job_urls = await naukri_scraper.scrape_job_urls(
             search_term="python",
             location="Bangalore",
             results_wanted=3
@@ -276,14 +289,14 @@ async def main():
         
         
         print("\n=== Step 2: Extracting Job Descriptions ===")
-        results = await scraper.scrape_job_batch(
+        results = await naukri_scraper.scrape_job_batch(
             urls=job_urls,
             batch_size=3,  # Small batch size to be respectful
             delay=3.0      # 3 second delay between batches
         )
         
         print("\n=== Step 3: Saving Results ===")
-        scraper.save_results(results)
+        naukri_scraper.save_results(results)
 
     except Exception as e:
         print(f"An error occurred: {e}")
