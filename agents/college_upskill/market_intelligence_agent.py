@@ -20,6 +20,7 @@ class MarketIntelligenceAgent(BaseAgent):
     - Salary benchmarking for different career paths
     - Geographic opportunity mapping
     - Industry growth trajectory analysis
+    - Dynamic domain extraction with LLM-based reasoning
     """
     
     def __init__(self, llm_model=None, config: Dict[str, Any] = None):
@@ -30,6 +31,9 @@ class MarketIntelligenceAgent(BaseAgent):
             llm_model=llm_model,
             config=config
         )
+        
+        # Store domain analysis details for integration into final output
+        self.domain_analysis_details = {}
     
     def _define_required_inputs(self) -> List[str]:
         """Define required inputs for market intelligence analysis"""
@@ -59,18 +63,71 @@ class MarketIntelligenceAgent(BaseAgent):
             "job_market_outlook": "Future opportunities and projections",
             "geographic_insights": "Location-based market data",
             "emerging_technologies": "New technologies and their impact",
-            "market_recommendations": "Strategic advice for students"
+            "market_recommendations": "Strategic advice for students",
+            "domain_selection_reasoning": "Explanation of how target domains were identified"
         }
-    
+
     def _initialize_agent(self):
         """Initialize market intelligence specific components"""
         self.output_parser = JsonOutputParser(pydantic_object=MarketIntelligenceOutput)
         
+        # Create domain extraction prompt with escaped JSON
+        self.domain_extraction_prompt = PromptTemplate(
+            input_variables=["context"],
+            template="""
+You are an expert career counselor analyzing a college student's profile to identify their most relevant career domains.
+
+Student Context:
+{context}
+
+Based on this information, identify 3-5 most relevant industry domains/career paths for this student. Consider:
+
+1. Educational background and field of study
+2. Technical and soft skills demonstrated
+3. Project work and practical experience
+4. Interests shown through activities/profiles
+5. Natural career progressions from their current state
+6. Emerging opportunities that match their profile
+
+Be broad in your domain thinking - include domains like:
+- Technology (Software, Hardware, AI/ML, Cybersecurity, etc.)
+- Business (Consulting, Finance, Marketing, Operations, etc.)
+- Healthcare (Medical, Biotech, Health Tech, Public Health, etc.)
+- Creative Industries (Design, Media, Entertainment, etc.)
+- Government & Policy (Public Service, Policy Analysis, etc.)
+- Education (Teaching, EdTech, Training, etc.)
+- Non-profit & Social Impact
+- Research & Academia
+- Manufacturing & Engineering
+- And any other relevant broad domains
+
+For each domain, provide:
+- Broad domain name (e.g., "Healthcare" not "Digital Health Technology")
+- Relevance score (1-10)
+- Brief explanation of why this domain fits the student's profile
+
+Return response in this exact JSON format:
+{{
+    "domains": ["Domain 1", "Domain 2", "Domain 3"],
+    "domain_analysis": {{
+        "Domain 1": {{
+            "relevance_score": 8.5,
+            "reasoning": "Detailed explanation of why this domain fits the student's background, skills, and interests"
+        }},
+        "Domain 2": {{
+            "relevance_score": 7.2,
+            "reasoning": "Detailed explanation of why this domain fits the student's background, skills, and interests"
+        }}
+    }},
+    "overall_reasoning": "High-level explanation of the domain selection strategy and how these domains complement each other for this student's career path"
+}}
+"""
+    )   
         # Create the main analysis prompt
         self.analysis_prompt = PromptTemplate(
             input_variables=[
                 "student_context", "profile_summary", "target_domains", 
-                "geographic_focus", "analysis_date", "format_instructions"
+                "domain_reasoning", "geographic_focus", "analysis_date", "format_instructions"
             ],
             template=self._create_system_prompt(
                 "Industry Analyst and Trend Forecaster",
@@ -80,6 +137,7 @@ Context Information:
 - Student Context: {student_context}
 - Profile Summary: {profile_summary}
 - Target Domains: {target_domains}
+- Domain Selection Reasoning: {domain_reasoning}
 - Geographic Focus: {geographic_focus}
 
 Your expertise includes:
@@ -91,21 +149,24 @@ Your expertise includes:
 - Technology trend impact assessment on career opportunities
 
 Analysis Framework:
-1. Current Market State: Analyze present job market conditions
-2. Demand Patterns: Identify high-demand skills and roles
-3. Salary Landscape: Provide compensation insights and trends
-4. Future Outlook: Project market changes and emerging opportunities
-5. Geographic Analysis: Compare opportunities across locations
-6. Technology Impact: Assess emerging tech influence on careers
-7. Strategic Recommendations: Provide actionable market-driven advice
+1. Current Market State: Analyze present job market conditions in the identified domains
+2. Demand Patterns: Identify high-demand skills and roles within these domains
+3. Salary Landscape: Provide compensation insights and trends for these domains
+4. Future Outlook: Project market changes and emerging opportunities in these areas
+5. Geographic Analysis: Compare opportunities across locations for these domains
+6. Technology Impact: Assess emerging tech influence on careers in these domains
+7. Strategic Recommendations: Provide actionable market-driven advice for these specific domains
 
 Focus Areas for College Students:
-- Entry-level and internship market conditions
-- Skills that differentiate candidates in competitive markets
-- Growing sectors with good entry opportunities
-- Remote work trends and global opportunity access
-- Startup vs established company market dynamics
-- Skill evolution timelines and learning priorities
+- Entry-level and internship market conditions in the target domains
+- Skills that differentiate candidates in competitive markets within these domains
+- Growing sectors with good entry opportunities in the identified domains
+- Remote work trends and global opportunity access in these fields
+- Startup vs established company market dynamics in these domains
+- Skill evolution timelines and learning priorities for these domains
+
+IMPORTANT: Base your entire analysis on the identified target domains: {target_domains}
+Include the domain selection reasoning in your final output to help the student understand why these domains were chosen.
 
 {format_instructions}
 
@@ -114,40 +175,53 @@ Provide comprehensive market intelligence analysis in the specified JSON format.
             )
         )
         
-        self.logger.info("Market Intelligence Agent initialized")
+        self.logger.info("Market Intelligence Agent initialized with dynamic domain extraction")
     
     @traceable(name="market_intelligence_analysis", tags=["market_intelligence", "comprehensive", "llm_chain"])
     def _process_core_logic(self, validated_input: Dict[str, Any]) -> Dict[str, Any]:
         """Core market intelligence analysis logic"""
-        self._add_processing_note("Starting market intelligence analysis")
+        self._add_processing_note("Starting market intelligence analysis with dynamic domain extraction")
         
-        # Extract context information
+        # Step 1: Extract target domains dynamically using LLM
+        target_domains, domain_reasoning = self._extract_target_domains_dynamic(validated_input)
+        
+        # Step 2: Extract other context information
         student_context = self._extract_student_context(validated_input)
         profile_summary = self._extract_profile_summary(validated_input)
-        target_domains = self._extract_target_domains(validated_input)
         geographic_focus = self._extract_geographic_focus(validated_input)
         
-        self.logger.info(f"Analyzing market intelligence for domains: {target_domains}")
+        self.logger.info(f"Analyzing market intelligence for dynamically identified domains: {target_domains}")
         
-        # Prepare prompt inputs
+        # Step 3: Prepare prompt inputs for main analysis
         prompt_inputs = {
             "student_context": student_context,
             "profile_summary": profile_summary,
             "target_domains": target_domains,
+            "domain_reasoning": domain_reasoning,
             "geographic_focus": geographic_focus,
             "analysis_date": datetime.now().strftime("%Y-%m-%d"),
             "format_instructions": self.output_parser.get_format_instructions()
         }
         
+        # Step 4: Execute main market intelligence analysis
         formatted_prompt = self.analysis_prompt.format(**prompt_inputs)
         response = self.llm_model.invoke(formatted_prompt)
         
         output_dict = self._parse_llm_response(response)
         
-        # Add metadata
+        # Step 5: Add domain selection reasoning to output
+        output_dict["domain_selection_reasoning"] = {
+            "identified_domains": target_domains.split(", "),
+            "domain_explanations": self.domain_analysis_details.get("domain_analysis", {}),
+            "overall_strategy": self.domain_analysis_details.get("overall_reasoning", ""),
+            "extraction_confidence": self.domain_analysis_details.get("extraction_confidence", 0.0)
+        }
+        
+        # Step 6: Add metadata
         output_dict["analysis_metadata"] = {
             "analysis_date": prompt_inputs["analysis_date"],
             "domains_analyzed": target_domains,
+            "domain_extraction_method": "LLM-based dynamic analysis",
             "geographic_scope": geographic_focus,
             "data_sources": self._get_data_sources(),
             "confidence_factors": self._assess_analysis_confidence(validated_input)
@@ -155,6 +229,190 @@ Provide comprehensive market intelligence analysis in the specified JSON format.
         
         self._add_processing_note("Market intelligence analysis completed successfully")
         return output_dict
+    
+    def _extract_target_domains_dynamic(self, validated_input: Dict[str, Any]) -> tuple[str, str]:
+        """Use LLM to dynamically extract target domains from all available data"""
+        self._add_processing_note("Extracting target domains using LLM analysis")
+        
+        # Build comprehensive context
+        context = self._build_comprehensive_context(validated_input)
+        
+        # Execute LLM call for domain extraction
+        formatted_prompt = self.domain_extraction_prompt.format(context=context)
+        response = self.llm_model.invoke(formatted_prompt)
+        
+        # Parse domain response (no fallback - let errors bubble up for debugging)
+        parsed_response = self._parse_domain_response(response)
+        
+        # Extract domain list and reasoning
+        domains_list = parsed_response.get("domains", [])
+        if not domains_list:
+            raise ValueError("LLM failed to identify any target domains")
+        
+        # Store detailed analysis for integration into final output
+        self.domain_analysis_details = {
+            "domain_analysis": parsed_response.get("domain_analysis", {}),
+            "overall_reasoning": parsed_response.get("overall_reasoning", ""),
+            "extraction_confidence": self._calculate_domain_confidence(context, parsed_response)
+        }
+        
+        domains_string = ", ".join(domains_list)
+        domain_reasoning = parsed_response.get("overall_reasoning", "")
+        
+        self.logger.info(f"Successfully extracted {len(domains_list)} target domains: {domains_string}")
+        return domains_string, domain_reasoning
+    
+    def _build_comprehensive_context(self, validated_input: Dict[str, Any]) -> str:
+        """Build comprehensive context from all available data sources"""
+        context_sections = []
+        
+        # Education background
+        resume_data = validated_input.get("optional_data", {}).get("resume_data")
+        if resume_data:
+            education = resume_data.get("education", [])
+            if education:
+                edu_info = education[0] if isinstance(education, list) else education
+                degree = edu_info.get('degree', 'Unknown')
+                field = edu_info.get('field', 'Unknown')
+                institution = edu_info.get('institution', 'Unknown')
+                context_sections.append(f"Education: {degree} in {field} from {institution}")
+            
+            # Skills
+            skills = resume_data.get("skills", [])
+            if skills:
+                context_sections.append(f"Skills: {', '.join(skills)}")
+            
+            # Experience
+            experience = resume_data.get("experience", [])
+            if experience:
+                exp_summary = []
+                for exp in experience[:3]:
+                    title = exp.get('title', 'Unknown Role')
+                    company = exp.get('company', 'Unknown Company')
+                    exp_summary.append(f"{title} at {company}")
+                context_sections.append(f"Experience: {'; '.join(exp_summary)}")
+            
+            # Projects
+            projects = resume_data.get("projects", [])
+            if projects:
+                proj_summary = []
+                for proj in projects[:3]:
+                    name = proj.get('name', 'Unnamed Project')
+                    description = proj.get('description', '')[:100]
+                    proj_summary.append(f"{name}: {description}")
+                context_sections.append(f"Projects: {'; '.join(proj_summary)}")
+        
+        # GitHub profile analysis
+        github_data = validated_input.get("optional_data", {}).get("github_profile")
+        if github_data:
+            languages = github_data.get("languages", [])
+            repos = github_data.get("repositories", [])
+            if languages:
+                context_sections.append(f"Programming Languages: {', '.join(languages[:5])}")
+            if repos:
+                repo_topics = []
+                for repo in repos[:5]:
+                    topics = repo.get("topics", [])
+                    if topics:
+                        repo_topics.extend(topics)
+                if repo_topics:
+                    unique_topics = list(set(repo_topics))[:10]
+                    context_sections.append(f"Project Topics: {', '.join(unique_topics)}")
+        
+        # LinkedIn profile
+        linkedin_data = validated_input.get("optional_data", {}).get("linkedin_profile")
+        if linkedin_data:
+            summary = linkedin_data.get("summary", "")
+            if summary:
+                context_sections.append(f"LinkedIn Summary: {summary[:200]}")
+            
+            interests = linkedin_data.get("interests", [])
+            if interests:
+                context_sections.append(f"Professional Interests: {', '.join(interests[:5])}")
+        
+        # Academic status
+        academic_data = validated_input.get("optional_data", {}).get("academic_status")
+        if academic_data:
+            year = academic_data.get("current_year", "Unknown")
+            major = academic_data.get("major", "Unknown")
+            context_sections.append(f"Current Status: {year} year student in {major}")
+        
+        # Previous agent analysis
+        profile_analysis = validated_input.get("previous_outputs", {}).get("profile_analysis")
+        if profile_analysis and hasattr(profile_analysis, 'output_data'):
+            strengths = profile_analysis.output_data.get("profile_strengths", [])
+            if strengths:
+                context_sections.append(f"Identified Strengths: {', '.join(strengths[:5])}")
+        
+        # Explicit target industries if specified
+        target_industries = validated_input.get("optional_data", {}).get("target_industries")
+        if target_industries:
+            context_sections.append(f"Student's Stated Target Industries: {target_industries}")
+        
+        final_context = "\n".join(context_sections) if context_sections else "Limited profile information available - please provide general domain recommendations for a college student."
+        
+        self.logger.info(f"Built comprehensive context with {len(context_sections)} sections")
+        return final_context
+    
+    def _parse_domain_response(self, response) -> Dict[str, Any]:
+        """Parse domain extraction response - strict parsing with no fallback"""
+        content = response.content.strip()
+        
+        # Clean markdown code blocks
+        if content.startswith("```json"):
+            content = content[7:]
+        elif content.startswith("```"):
+            content = content[3:]
+        
+        if content.endswith("```"):
+            content = content[:-3]
+        
+        content = content.strip()
+        
+        try:
+            parsed = json.loads(content)
+            
+            # Validate required fields
+            if "domains" not in parsed:
+                raise ValueError("Response missing required 'domains' field")
+            if "domain_analysis" not in parsed:
+                raise ValueError("Response missing required 'domain_analysis' field")
+            if "overall_reasoning" not in parsed:
+                raise ValueError("Response missing required 'overall_reasoning' field")
+            
+            return parsed
+            
+        except json.JSONDecodeError as e:
+            self.logger.error(f"Failed to parse domain extraction response: {e}")
+            self.logger.error(f"Raw content: {repr(content)}")
+            raise ValueError(f"Failed to parse domain extraction response as JSON: {e}")
+    
+    def _calculate_domain_confidence(self, context: str, parsed_response: Dict[str, Any]) -> float:
+        """Calculate confidence in domain extraction"""
+        base_confidence = 0.7
+        
+        # Boost confidence with more context
+        context_sections = context.count('\n') + 1
+        if context_sections > 5:
+            base_confidence += 0.1
+        elif context_sections > 3:
+            base_confidence += 0.05
+        
+        # Check quality of domain analysis
+        domain_analysis = parsed_response.get("domain_analysis", {})
+        if domain_analysis:
+            avg_reasoning_length = sum(len(analysis.get("reasoning", "")) for analysis in domain_analysis.values()) / len(domain_analysis)
+            if avg_reasoning_length > 100:
+                base_confidence += 0.1
+            elif avg_reasoning_length > 50:
+                base_confidence += 0.05
+        
+        # Check if overall reasoning is substantial
+        overall_reasoning = parsed_response.get("overall_reasoning", "")
+        if len(overall_reasoning) > 100:
+            base_confidence += 0.05
+        
+        return min(0.95, base_confidence)
     
     def _extract_student_context(self, validated_input: Dict[str, Any]) -> str:
         """Extract student context from available data"""
@@ -206,36 +464,6 @@ Provide comprehensive market intelligence analysis in the specified JSON format.
         
         return "No previous profile analysis available"
     
-    def _extract_target_domains(self, validated_input: Dict[str, Any]) -> str:
-        """Extract target domains/industries from available data"""
-        domains = []
-        
-        # From resume data - infer from education and skills
-        resume_data = validated_input.get("optional_data", {}).get("resume_data")
-        if resume_data:
-            education = resume_data.get("education", [])
-            if education:
-                field = education[0].get("field", "") if isinstance(education, list) else education.get("field", "")
-                if "computer" in field.lower() or "software" in field.lower():
-                    domains.append("Software/Technology")
-                elif "business" in field.lower() or "management" in field.lower():
-                    domains.append("Business/Management")
-                elif "data" in field.lower() or "analytics" in field.lower():
-                    domains.append("Data Science/Analytics")
-        
-        # From GitHub profile - infer from languages
-        github_data = validated_input.get("optional_data", {}).get("github_profile")
-        if github_data:
-            languages = github_data.get("languages", [])
-            if "Python" in languages or "R" in languages:
-                if "Data Science/Analytics" not in domains:
-                    domains.append("Data Science/Analytics")
-            if "JavaScript" in languages or "React" in languages:
-                if "Web Development" not in domains:
-                    domains.append("Web Development")
-        
-        return ", ".join(domains) if domains else "Technology/Software Development"
-    
     def _extract_geographic_focus(self, validated_input: Dict[str, Any]) -> str:
         """Extract geographic preferences"""
         # Default to Indian market with global remote opportunities
@@ -260,7 +488,8 @@ Provide comprehensive market intelligence analysis in the specified JSON format.
             "salary_insights": 0.75,   # Varies by source quality
             "job_outlook": 0.7,        # Projections have uncertainty
             "geographic_data": 0.8,    # Good local market knowledge
-            "tech_trends": 0.85        # Strong trend data available
+            "tech_trends": 0.85,       # Strong trend data available
+            "domain_extraction": self.domain_analysis_details.get("extraction_confidence", 0.7)
         }
         
         # Adjust confidence based on available data
@@ -285,9 +514,13 @@ Provide comprehensive market intelligence analysis in the specified JSON format.
         if validated_data.get('previous_outputs', {}).get('profile_analysis'):
             base_confidence += 0.1
         
+        # Boost confidence with successful domain extraction
+        if output_data.get("domain_selection_reasoning"):
+            base_confidence += 0.05
+        
         # Check output completeness
         expected_keys = ["industry_trends", "skill_demand", "salary_insights", 
-                        "job_market_outlook", "geographic_insights"]
+                        "job_market_outlook", "geographic_insights", "domain_selection_reasoning"]
         completed_keys = sum(1 for key in expected_keys if key in output_data and output_data[key])
         completeness_boost = (completed_keys / len(expected_keys)) * 0.1
         

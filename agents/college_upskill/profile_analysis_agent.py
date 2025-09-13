@@ -359,54 +359,6 @@ Provide a comprehensive, strategic analysis that synthesizes all available infor
                 "individual_analyses_available": list(individual_analyses.keys())
             }
     
-    def _process_core_logic(self, validated_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Core processing logic for profile analysis"""
-        self.logger.info("Starting comprehensive profile analysis")
-        
-        # Step 1: Process individual inputs with structured analysis
-        individual_analyses = self._process_individual_inputs(validated_data)
-        
-        # Step 2: Perform comprehensive integration analysis
-        self.logger.info("Performing integrated profile analysis")
-        
-        # Prepare data for final analysis
-        analysis_inputs = {
-            "resume_analysis": json.dumps(individual_analyses.get("resume", {}), indent=2),
-            "linkedin_analysis": json.dumps(individual_analyses.get("linkedin", "Not provided"), indent=2),
-            "github_analysis": json.dumps(individual_analyses.get("github", "Not provided"), indent=2),
-            "academic_analysis": json.dumps(individual_analyses.get("academic", "Not provided"), indent=2),
-            "experience_analysis": json.dumps(individual_analyses.get("experience", "Not provided"), indent=2)
-        }
-        
-        # Execute the chain - this returns a ProfileAnalysisResult object
-        final_chain = self.final_analysis_prompt | self.llm_model | self.final_parser
-        comprehensive_analysis = final_chain.invoke(analysis_inputs)
-
-        # Convert the Pydantic model to dictionary directly
-        output_dict = comprehensive_analysis.dict()
-        
-        self._add_processing_note("Comprehensive analysis completed successfully")
-        
-        # Compile final result
-        result = {
-            "comprehensive_analysis": output_dict,
-            "individual_analyses": individual_analyses,
-            "analysis_metadata": {
-                "analyzed_components": list(individual_analyses.keys()),
-                "missing_components": [comp for comp in ["linkedin", "github", "academic", "experience"] 
-                                    if comp not in individual_analyses],
-                "analysis_timestamp": datetime.now().isoformat(),
-                "data_sources_count": len(individual_analyses)
-            },
-            "recommendations_summary": {
-                "immediate_actions": comprehensive_analysis.recommended_next_steps[:3],
-                "profile_improvements": comprehensive_analysis.improvement_priorities[:3],
-                "competitive_positioning": comprehensive_analysis.profile_positioning
-            }
-        }
-        
-        return result
-    
     def _calculate_confidence_score(self, validated_data: Dict[str, Any], output_data: Dict[str, Any]) -> float:
         """Calculate confidence score based on data availability and analysis success"""
         base_confidence = 0.6
