@@ -1,6 +1,7 @@
 from typing import Dict, Any
-from agents.base_fleet_manager import BaseFleetManager
-from agents.college_upskill.college_student_fleet_manager import CollegeStudentFleetManager
+from agentic_layer.base_fleet_manager import BaseFleetManager
+from agentic_layer.college_upskill.college_student_fleet_manager import CollegeStudentFleetManager
+from agentic_layer.school_students.school_student_fleet_manager import SchoolStudentFleetManager
 
 class FleetIntegrator:
     """Helper class for integrating fleet managers with the main orchestrator"""
@@ -9,6 +10,12 @@ class FleetIntegrator:
     def create_college_fleet(llm_model=None) -> CollegeStudentFleetManager:
         """Create and return configured college student fleet"""
         fleet = CollegeStudentFleetManager(llm_model)
+        return fleet
+    
+    @staticmethod
+    def create_school_student_fleet(llm_model=None) -> SchoolStudentFleetManager:
+        """Create and return configured school student fleet"""
+        fleet = SchoolStudentFleetManager(llm_model)
         return fleet
     
     @staticmethod

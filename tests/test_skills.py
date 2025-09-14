@@ -12,7 +12,7 @@ sys.path.append(str(PROJECT_ROOT))
 
 # Import required modules
 from langchain_community.document_loaders import PyMuPDFLoader
-from agents.agent_orchestrator import MainOrchestrator, UserData
+from agentic_layer.agent_orchestrator import MainOrchestrator, UserData
 from config.llm_config import llm_manager
 
 # Configure logging
@@ -277,7 +277,7 @@ class CollegeWorkflowRunner:
             results_dir = Path("workflow_results")
             results_dir.mkdir(exist_ok=True)
             
-            filename = f"college_workflow_{session_id}.json"
+            filename = f"college_workflow.json"
             filepath = results_dir / filename
             
             with open(filepath, 'w', encoding='utf-8') as f:

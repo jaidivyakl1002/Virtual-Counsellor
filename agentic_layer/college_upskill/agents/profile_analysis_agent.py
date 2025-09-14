@@ -1,15 +1,12 @@
 from typing import Dict, List, Any, Optional
 import json
 import logging
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../'))
 from langchain_community.document_loaders import PyMuPDFLoader
 from datetime import datetime
 from langsmith import traceable
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
-from agents.base_agent import BaseAgent
+from agentic_layer.base_agent import BaseAgent
 from config.agent_config import AgentType, ResumeAnalysis, LinkedInAnalysis, GitHubAnalysis, AcademicAnalysis, ExperienceAnalysis, ProfileAnalysisResult
 from config.llm_config import llm_manager
 

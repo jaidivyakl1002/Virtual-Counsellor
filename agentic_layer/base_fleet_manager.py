@@ -5,7 +5,7 @@ from datetime import datetime
 import json
 from abc import ABC, abstractmethod
 from config.agent_config import AgentDependency, AgentResult, AgentInput, FleetExecutionStrategy, FleetResult, FleetStatus, ProcessingStatus
-from agents.base_agent import BaseAgent
+from agentic_layer.base_agent import BaseAgent
 from langsmith import Client, traceable
 from langchain_core.tracers.langchain import LangChainTracer
 import os

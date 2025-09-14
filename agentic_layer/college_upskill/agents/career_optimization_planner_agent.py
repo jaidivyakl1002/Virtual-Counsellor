@@ -1,7 +1,7 @@
 from typing import Dict, List, Any, Optional
 from datetime import datetime, timedelta
 import json
-from agents.base_agent import BaseAgent
+from agentic_layer.base_agent import BaseAgent
 from config.agent_config import AgentType, CareerOptimizationOutput
 from langsmith import traceable
 from langchain_core.prompts import PromptTemplate

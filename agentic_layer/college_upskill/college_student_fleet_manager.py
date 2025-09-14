@@ -1,14 +1,14 @@
 import json
 from typing import Dict, List, Any
-from agents.base_agent import BaseAgent
-from agents.base_fleet_manager import BaseFleetManager
+from agentic_layer.base_agent import BaseAgent
+from agentic_layer.base_fleet_manager import BaseFleetManager
 from config.agent_config import AgentDependency, AgentResult, ProcessingStatus
 from config.llm_config import llm_manager
-from agents.college_upskill.profile_analysis_agent import ProfileAnalysisAgent
-from agents.college_upskill.market_intelligence_agent import MarketIntelligenceAgent
-from agents.college_upskill.skill_development_strategist_agent import SkillDevelopmentStrategistAgent
-from agents.college_upskill.career_optimization_planner_agent import CareerOptimizationPlannerAgent
-from agents.college_upskill.opportunity_matcher_agent import OpportunityMatcherAgent
+from agentic_layer.college_upskill.agents.profile_analysis_agent import ProfileAnalysisAgent
+from agentic_layer.college_upskill.agents.market_intelligence_agent import MarketIntelligenceAgent
+from agentic_layer.college_upskill.agents.skill_development_strategist_agent import SkillDevelopmentStrategistAgent
+from agentic_layer.college_upskill.agents.career_optimization_planner_agent import CareerOptimizationPlannerAgent
+from agentic_layer.college_upskill.agents.opportunity_matcher_agent import OpportunityMatcherAgent
 
 class CollegeStudentFleetManager(BaseFleetManager):
     """
