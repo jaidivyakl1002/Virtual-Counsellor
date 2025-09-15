@@ -7,7 +7,7 @@ from config.langsmith_config import LangSmithConfig, initialize_langsmith
 from langchain.memory import ConversationBufferWindowMemory
 from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import MemorySaver
-from agents.fleet_integrator import FleetIntegrator
+from agentic_layer.fleet_integrator import FleetIntegrator
 from config.llm_config import llm_manager
 import json
 from datetime import datetime
@@ -48,7 +48,6 @@ class UserData(TypedDict):
     # Assessment data (for school students and career transition)
     dbda_scores: Optional[Dict[str, float]]
     cii_results: Optional[Dict[str, Any]]
-    raisec_profile: Optional[Dict[str, Any]]
     
     # College student specific data
     resume_data: Optional[Dict[str, Any]]
@@ -70,7 +69,7 @@ class VerticalValidator:
             Vertical.SCHOOL_STUDENTS: {
                 "name": "School Students (Grades 9-12)",
                 "description": "Career exploration and academic stream guidance for high school students",
-                "required_fields": ["dbda_scores", "cii_results", "raisec_profile"],
+                "required_fields": ["dbda_scores", "cii_results"],
                 "optional_fields": ["demographic_info"],
                 "workflow_agents": [
                     "test_score_interpreter",
@@ -96,7 +95,7 @@ class VerticalValidator:
             Vertical.CAREER_TRANSITION: {
                 "name": "Career Transition/Switch",
                 "description": "Comprehensive analysis for career change with constraints consideration",
-                "required_fields": ["dbda_scores", "cii_results", "raisec_profile", "current_profession"],
+                "required_fields": ["dbda_scores", "cii_results", "current_profession"],
                 "optional_fields": ["financial_constraints", "timeline_flexibility", "family_obligations"],
                 "workflow_agents": [
                     "transition_feasibility_analyzer",
@@ -193,7 +192,7 @@ class MainOrchestrator:
         
         # Agent fleet placeholders - will be implemented with actual agents
         self.agent_fleets = {
-            # Vertical.SCHOOL_STUDENTS: self._create_school_student_agents(),
+            Vertical.SCHOOL_STUDENTS: self._create_school_student_agents(),
             Vertical.COLLEGE_UPSKILLING: self._create_college_student_agents(),
             # Vertical.CAREER_TRANSITION: self._create_career_transition_agents()
         }
@@ -554,6 +553,10 @@ class MainOrchestrator:
                 "Try again with complete information",
                 "Contact technical support if the problem persists"
             ]
+    
+    def _create_school_student_agents(self):
+        """Create school student agent fleet"""
+        return FleetIntegrator.create_school_student_fleet(self.llm_model)
     
     def _create_college_student_agents(self):
         """Create college student agent fleet"""

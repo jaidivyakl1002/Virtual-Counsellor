@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Career Counselor - System Architecture</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            background: #f8f9fa;
+            zoom: 0.9;
+        }
+        
+        .diagram-container {
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .diagram-svg {
+            width: 100%;
+            height: 1000px;
+        }
+        
+        /* Lucidchart-style boxes */
+        .box {
+            fill: white;
+            stroke: #2c3e50;
+            stroke-width: 2;
+            rx: 8;
+        }
+        
+        .box-header {
+            fill: #3498db;
+            stroke: #2980b9;
+            stroke-width: 2;
+            rx: 8;
+        }
+        
+        .box-service {
+            fill: #e8f4f8;
+            stroke: #3498db;
+            stroke-width: 2;
+            rx: 6;
+        }
+        
+        .box-agent {
+            fill: #e8f5e8;
+            stroke: #27ae60;
+            stroke-width: 2;
+            rx: 6;
+        }
+        
+        .box-storage {
+            fill: #fff3e0;
+            stroke: #f39c12;
+            stroke-width: 2;
+            rx: 6;
+        }
+        
+        .box-external {
+            fill: #fce4ec;
+            stroke: #e91e63;
+            stroke-width: 2;
+            rx: 6;
+            stroke-dasharray: 5,5;
+        }
+        
+        .box-pipeline {
+            fill: #f3e5f5;
+            stroke: #9b59b6;
+            stroke-width: 2;
+            rx: 8;
+        }
+        
+        /* Text styles */
+        .text-header {
+            fill: white;
+            font-size: 14px;
+            font-weight: bold;
+            text-anchor: middle;
+        }
+        
+        .text-title {
+            fill: #2c3e50;
+            font-size: 12px;
+            font-weight: bold;
+            text-anchor: middle;
+        }
+        
+        .text-subtitle {
+            fill: #7f8c8d;
+            font-size: 10px;
+            text-anchor: middle;
+        }
+        
+        /* Connection lines */
+        .connection {
+            stroke: #34495e;
+            stroke-width: 2;
+            fill: none;
+            marker-end: url(#arrowhead);
+        }
+        
+        .connection-light {
+            stroke: #7fb3d3;
+            stroke-width: 1.5;
+            fill: none;
+            marker-end: url(#arrowhead-light);
+        }
+        
+        .connection-dashed {
+            stroke: #95a5a6;
+            stroke-width: 1.5;
+            fill: none;
+            stroke-dasharray: 4,4;
+            marker-end: url(#arrowhead-gray);
+        }
+        
+        .section-bg {
+            fill: #ecf0f1;
+            stroke: #bdc3c7;
+            stroke-width: 1;
+            rx: 12;
+            opacity: 0.3;
+        }
+        
+        .section-label {
+            fill: #2c3e50;
+            font-size: 16px;
+            font-weight: bold;
+            text-anchor: middle;
+        }
+
+        /* Curved path styles */
+        .curved-path {
+            stroke: #5dade2;
+            stroke-width: 1.5;
+            fill: none;
+            marker-end: url(#arrowhead-blue);
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <h1 class="title">Virtual Career Counselor - System Architecture</h1>
+        
+        <svg class="diagram-svg" viewBox="0 0 1500 900">
+            <!-- Arrow markers -->
+            <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                        refX="10" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#34495e"/>
+                </marker>
+                <marker id="arrowhead-light" markerWidth="8" markerHeight="6" 
+                        refX="8" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#7fb3d3"/>
+                </marker>
+                <marker id="arrowhead-gray" markerWidth="8" markerHeight="6" 
+                        refX="8" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#95a5a6"/>
+                </marker>
+                <marker id="arrowhead-blue" markerWidth="8" markerHeight="6" 
+                        refX="8" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#5dade2"/>
+                </marker>
+            </defs>
+            
+            <!-- Section backgrounds -->
+            <rect class="section-bg" x="20" y="50" width="280" height="200"/>
+            <text class="section-label" x="160" y="40">Frontend Layer</text>
+            
+            <rect class="section-bg" x="350" y="50" width="280" height="200"/>
+            <text class="section-label" x="490" y="40">Core Services</text>
+            
+            <rect class="section-bg" x="680" y="50" width="450" height="320"/>
+            <text class="section-label" x="905" y="40">AI Agent Fleet</text>
+            
+            <rect class="section-bg" x="1180" y="50" width="270" height="320"/>
+            <text class="section-label" x="1315" y="40">RAG Knowledge Base</text>
+            
+            <rect class="section-bg" x="350" y="410" width="400" height="120"/>
+            <text class="section-label" x="550" y="400">Feature Verticals</text>
+            
+            <rect class="section-bg" x="20" y="580" width="600" height="120"/>
+            <text class="section-label" x="320" y="570">Data Layer (In-Memory)</text>
+            
+            <rect class="section-bg" x="680" y="580" width="300" height="120"/>
+            <text class="section-label" x="830" y="570">External APIs</text>
+            
+            <!-- Frontend Components -->
+            <rect class="box-header" x="30" y="70" width="100" height="30"/>
+            <text class="text-header" x="80" y="88">User Interface</text>
+            
+            <rect class="box" x="30" y="115" width="100" height="30"/>
+            <text class="text-title" x="80" y="130">Digital Test</text>
+            <text class="text-subtitle" x="80" y="140">Interface</text>
+            
+            <rect class="box" x="150" y="115" width="100" height="30"/>
+            <text class="text-title" x="200" y="130">Chat UI</text>
+            <text class="text-subtitle" x="200" y="140">Q&A Interface</text>
+            
+            <rect class="box" x="30" y="160" width="100" height="30"/>
+            <text class="text-title" x="80" y="175">Report UI</text>
+            <text class="text-subtitle" x="80" y="185">Display Results</text>
+            
+            <rect class="box" x="150" y="160" width="100" height="30"/>
+            <text class="text-title" x="200" y="175">Profile UI</text>
+            <text class="text-subtitle" x="200" y="185">Management</text>
+            
+            <!-- API Gateway -->
+            <rect class="box-header" x="360" y="70" width="120" height="40"/>
+            <text class="text-header" x="420" y="88">FastAPI Gateway</text>
+            <text class="text-header" x="420" y="102">Auth & Routing</text>
+            
+            <!-- Core Services -->
+            <rect class="box-service" x="360" y="140" width="110" height="35"/>
+            <text class="text-title" x="415" y="155">Test Processing</text>
+            <text class="text-subtitle" x="415" y="168">DBDA, CII, RAISEC</text>
+            
+            <rect class="box-service" x="490" y="140" width="110" height="35"/>
+            <text class="text-title" x="545" y="155">Profile Analysis</text>
+            <text class="text-subtitle" x="545" y="168">Resume, GitHub</text>
+            
+            <rect class="box-service" x="425" y="200" width="110" height="35"/>
+            <text class="text-title" x="480" y="215">Agent</text>
+            <text class="text-subtitle" x="480" y="228">Orchestrator</text>
+            
+            <!-- AI Agents - Reorganized layout -->
+            <rect class="box-agent" x="700" y="90" width="110" height="35"/>
+            <text class="text-title" x="755" y="105">Score</text>
+            <text class="text-subtitle" x="755" y="118">Interpreter</text>
+            
+            <rect class="box-agent" x="850" y="90" width="110" height="35"/>
+            <text class="text-title" x="905" y="105">Career</text>
+            <text class="text-subtitle" x="905" y="118">Matcher</text>
+            
+            <rect class="box-agent" x="1000" y="90" width="110" height="35"/>
+            <text class="text-title" x="1055" y="105">Skill</text>
+            <text class="text-subtitle" x="1055" y="118">Analyzer</text>
+            
+            <rect class="box-agent" x="700" y="160" width="110" height="35"/>
+            <text class="text-title" x="755" y="175">Path</text>
+            <text class="text-subtitle" x="755" y="188">Planner</text>
+            
+            <rect class="box-agent" x="850" y="160" width="110" height="35"/>
+            <text class="text-title" x="905" y="175">Transition</text>
+            <text class="text-subtitle" x="905" y="188">Agent</text>
+            
+            <rect class="box-agent" x="1000" y="160" width="110" height="35"/>
+            <text class="text-title" x="1055" y="175">Conversation</text>
+            <text class="text-subtitle" x="1055" y="188">Agent</text>
+            
+            <!-- RAG Knowledge Base -->
+            <rect class="box-storage" x="1200" y="90" width="120" height="40"/>
+            <text class="text-title" x="1260" y="105">Vector Database</text>
+            <text class="text-subtitle" x="1260" y="118">Career Info</text>
+            
+            <rect class="box-storage" x="1320" y="90" width="120" height="40"/>
+            <text class="text-title" x="1380" y="105">Data Ingestion</text>
+            <text class="text-subtitle" x="1380" y="118">Pipeline</text>
+            
+            <!-- Knowledge Sources -->
+            <rect class="box-storage" x="1200" y="160" width="80" height="25"/>
+            <text class="text-title" x="1240" y="175">College DB</text>
+            
+            <rect class="box-storage" x="1290" y="160" width="80" height="25"/>
+            <text class="text-title" x="1330" y="175">Course DB</text>
+            
+            <rect class="box-storage" x="1380" y="160" width="80" height="25"/>
+            <text class="text-title" x="1420" y="175">Job Market</text>
+            
+            <rect class="box-storage" x="1200" y="200" width="80" height="25"/>
+            <text class="text-title" x="1240" y="215">Scholarship</text>
+            
+            <rect class="box-storage" x="1290" y="200" width="80" height="25"/>
+            <text class="text-title" x="1330" y="215">Career DB</text>
+            
+            <!-- Feature Verticals -->
+            <rect class="box-pipeline" x="370" y="440" width="110" height="35"/>
+            <text class="text-title" x="425" y="455">School Students</text>
+            <text class="text-subtitle" x="425" y="468">Grades 9-12</text>
+            
+            <rect class="box-pipeline" x="500" y="440" width="110" height="35"/>
+            <text class="text-title" x="555" y="455">College Students</text>
+            <text class="text-subtitle" x="555" y="468">Upskill & Career</text>
+            
+            <rect class="box-pipeline" x="630" y="440" width="110" height="35"/>
+            <text class="text-title" x="685" y="455">Career Switch</text>
+            <text class="text-subtitle" x="685" y="468">Transition</text>
+            
+            <!-- Data Layer -->
+            <rect class="box-storage" x="40" y="600" width="100" height="35"/>
+            <text class="text-title" x="90" y="615">Session</text>
+            <text class="text-subtitle" x="90" y="628">Data Store</text>
+            
+            <rect class="box-storage" x="160" y="600" width="100" height="35"/>
+            <text class="text-title" x="210" y="615">Test Results</text>
+            <text class="text-subtitle" x="210" y="628">Cache</text>
+            
+            <rect class="box-storage" x="280" y="600" width="100" height="35"/>
+            <text class="text-title" x="330" y="615">User Profiles</text>
+            <text class="text-subtitle" x="330" y="628">Cache</text>
+            
+            <rect class="box-storage" x="400" y="600" width="100" height="35"/>
+            <text class="text-title" x="450" y="615">Conversation</text>
+            <text class="text-subtitle" x="450" y="628">History</text>
+            
+            <!-- External APIs -->
+            <rect class="box-external" x="700" y="600" width="80" height="25"/>
+            <text class="text-title" x="740" y="615">LinkedIn API</text>
+            
+            <rect class="box-external" x="790" y="600" width="80" height="25"/>
+            <text class="text-title" x="830" y="615">GitHub API</text>
+            
+            <rect class="box-external" x="880" y="600" width="80" height="25"/>
+            <text class="text-title" x="920" y="615">Job Portals</text>
+            
+            <!-- Main Flow Connections -->
+            <!-- Frontend to Gateway -->
+            <line class="connection" x1="260" y1="130" x2="350" y2="90"/>
+            <line class="connection" x1="260" y1="175" x2="350" y2="95"/>
+            
+            <!-- Gateway to Services -->
+            <line class="connection" x1="480" y1="90" x2="415" y2="140"/>
+            <line class="connection" x1="480" y1="95" x2="545" y2="140"/>
+            <line class="connection" x1="480" y1="110" x2="480" y2="200"/>
+            
+            <!-- Services to Verticals -->
+            <line class="connection-light" x1="415" y1="175" x2="425" y2="440"/>
+            <line class="connection-light" x1="480" y1="235" x2="555" y2="440"/>
+            <line class="connection-light" x1="480" y1="235" x2="685" y2="440"/>
+            
+            <!-- Orchestrator to Agents - Using curved paths to reduce overlap -->
+            <path class="curved-path" d="M 535 217 Q 620 217 700 107"/>
+            <path class="curved-path" d="M 535 217 Q 650 190 850 107"/>
+            <path class="curved-path" d="M 535 217 Q 680 160 1000 107"/>
+            <path class="curved-path" d="M 535 217 Q 620 240 700 177"/>
+            <path class="curved-path" d="M 535 217 Q 650 240 850 177"/>
+            <path class="curved-path" d="M 535 217 Q 680 240 1000 177"/>
+            
+            <!-- Agents to Vector DB - Simplified connections -->
+            <line class="connection-light" x1="810" y1="107" x2="1200" y2="110"/>
+            <line class="connection-light" x1="960" y1="107" x2="1200" y2="110"/>
+            <line class="connection-light" x1="1110" y1="107" x2="1200" y2="110"/>
+            <line class="connection-light" x1="810" y1="177" x2="1200" y2="110"/>
+            <line class="connection-light" x1="960" y1="177" x2="1200" y2="110"/>
+            <line class="connection-light" x1="1110" y1="177" x2="1200" y2="110"/>
+            
+            <!-- Data Ingestion to Sources -->
+            <line class="connection" x1="1380" y1="130" x2="1240" y2="160"/>
+            <line class="connection" x1="1380" y1="130" x2="1330" y2="160"/>
+            <line class="connection" x1="1380" y1="130" x2="1420" y2="160"/>
+            <line class="connection" x1="1380" y1="130" x2="1240" y2="200"/>
+            <line class="connection" x1="1380" y1="130" x2="1330" y2="200"/>
+            
+            <!-- Sources to Vector DB -->
+            <line class="connection" x1="1240" y1="185" x2="1260" y2="130"/>
+            <line class="connection" x1="1330" y1="185" x2="1260" y2="130"/>
+            <line class="connection" x1="1420" y1="185" x2="1260" y2="130"/>
+            <line class="connection" x1="1240" y1="225" x2="1260" y2="130"/>
+            <line class="connection" x1="1330" y1="225" x2="1260" y2="130"/>
+            
+            <!-- Gateway to Data Layer - Spread out connections -->
+            <path class="connection-light" d="M 420 110 Q 300 350 90 600"/>
+            <path class="connection-light" d="M 420 110 Q 320 350 210 600"/>
+            <path class="connection-light" d="M 420 110 Q 340 350 330 600"/>
+            <path class="connection-light" d="M 420 110 Q 360 350 450 600"/>
+            
+            <!-- Profile Service to External APIs (dashed) -->
+            <line class="connection-dashed" x1="545" y1="175" x2="740" y2="600"/>
+            <line class="connection-dashed" x1="545" y1="175" x2="830" y2="600"/>
+            <line class="connection-dashed" x1="545" y1="175" x2="920" y2="600"/>
+            
+        </svg>
+        
+        <!-- Legend -->
+        <div style="margin-top: 30px; display: flex; justify-content: center; gap: 30px; font-size: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 20px; height: 15px; background: #e8f4f8; border: 2px solid #3498db; border-radius: 3px;"></div>
+                <span>Core Services</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 20px; height: 15px; background: #e8f5e8; border: 2px solid #27ae60; border-radius: 3px;"></div>
+                <span>AI Agents</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 20px; height: 15px; background: #fff3e0; border: 2px solid #f39c12; border-radius: 3px;"></div>
+                <span>Data Storage</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 20px; height: 15px; background: #fce4ec; border: 2px dashed #e91e63; border-radius: 3px;"></div>
+                <span>External APIs</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
