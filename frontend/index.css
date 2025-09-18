@@ -44,3 +44,29 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
+
+/* Form and file upload styles */
+.drag-over {
+  border-color: #146C94 !important;
+  background-color: rgba(20, 108, 148, 0.08) !important;
+}
+
+/* Smooth transitions for form elements */
+.MuiTextField-root .MuiOutlinedInput-root {
+  transition: all 0.3s ease;
+}
+
+.MuiTextField-root .MuiOutlinedInput-root:hover {
+  border-color: rgba(20, 108, 148, 0.5);
+}
+
+/* File upload animation */
+@keyframes uploadPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.upload-container:hover {
+  animation: uploadPulse 0.3s ease;
+}

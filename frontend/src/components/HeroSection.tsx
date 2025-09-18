@@ -1,6 +1,7 @@
-import React from 'react';
+import {useState} from 'react';
 import { Container, Typography, Button, Stack, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import AssessmentModal from './AssessmentModal';
 
 const HeroContainer = styled(Box)(({ theme }) => ({
   background: 'linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%)',
@@ -56,6 +57,17 @@ const HeroImage = styled('img')(({ theme }) => ({
 }));
 
 const HeroSection: React.FC = () => {
+
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const handleStartAssessment = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
   return (
     <HeroContainer>
       <Container maxWidth="lg">
@@ -91,7 +103,7 @@ const HeroSection: React.FC = () => {
             </Typography>
             
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} sx={{ mt: 2 }}>
-              <PrimaryButton size="large">
+              <PrimaryButton size="large" onClick={handleStartAssessment}>
                 Find My Path
               </PrimaryButton>
               <SecondaryButton variant="outlined" size="large">
@@ -109,6 +121,10 @@ const HeroSection: React.FC = () => {
           </Box>
         </Stack>
       </Container>
+      <AssessmentModal 
+        open={modalOpen} 
+        onClose={handleCloseModal} 
+      />
     </HeroContainer>
   );
 };

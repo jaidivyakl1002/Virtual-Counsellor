@@ -8,6 +8,7 @@ import LandingPage from './pages/LandingPage';
 import SchoolPage from './pages/School';
 import CollegePage from './pages/College';
 import ProfessionalsPage from './pages/Professional';
+import CollegeAssessment from './pages/CollegeAssessment';
 
 const createEmotionCache = () => {
   return createCache({
@@ -28,6 +29,7 @@ const App: React.FC = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/school" element={<SchoolPage />} />
             <Route path="/college" element={<CollegePage />} />
+            <Route path="/college_test" element={<CollegeAssessment />} />
             <Route path="/professional" element={<ProfessionalsPage />} />
             {/* Fallback route */}
             <Route path="*" element={<LandingPage />} />

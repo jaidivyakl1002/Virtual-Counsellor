@@ -90,9 +90,9 @@ const Footer: React.FC = () => {
                 <Typography variant="h6" sx={{ fontWeight: 600, color: 'white', mb: 1 }}>
                   Product
                 </Typography>
-                <FooterLink href="#">For Students</FooterLink>
-                <FooterLink href="#">How It Works</FooterLink>
-                <FooterLink href="#">Professionals</FooterLink>
+                <FooterLink href="#">For School</FooterLink>
+                <FooterLink href="#">For College</FooterLink>
+                <FooterLink href="#">For Professionals</FooterLink>
                 <FooterLink href="#">Pricing</FooterLink>
               </FooterSection>
 

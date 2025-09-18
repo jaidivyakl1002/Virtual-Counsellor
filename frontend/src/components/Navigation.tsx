@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Stack, Container } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Link, useLocation } from 'react-router-dom';
 import PsychologyOutlinedIcon from '@mui/icons-material/PsychologyOutlined';
+import AssessmentModal from './AssessmentModal';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -56,6 +57,15 @@ const CTAButton = styled(Button)(({ theme }) => ({
 
 const Navigation: React.FC = () => {
   const location = useLocation();
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const handleStartAssessment = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
   
   return (
     <StyledAppBar position="fixed" elevation={0}>
@@ -92,10 +102,17 @@ const Navigation: React.FC = () => {
             >
               For Professionals
             </NavButton>
-            <CTAButton>Start Your Assessment</CTAButton>
+            <CTAButton onClick={handleStartAssessment}>
+              Start Your Assessment
+            </CTAButton>
           </Stack>
         </Toolbar>
       </Container>
+      
+      <AssessmentModal 
+        open={modalOpen} 
+        onClose={handleCloseModal} 
+      />
     </StyledAppBar>
   );
 };
