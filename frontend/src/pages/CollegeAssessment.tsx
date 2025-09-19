@@ -21,6 +21,7 @@ import AcademicStatusSection from '../components/assessment/AcademicStatusSectio
 import ProfessionalProfilesSection from '../components/assessment/ProfessionalProfilesSection';
 import CareerGoalsSection from '../components/assessment/CareerGoalsSection';
 import { CollegeAssessmentFormData, FormErrors } from '../types/collegeAssessmentTypes';
+import { useNavigate } from 'react-router-dom';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
@@ -74,17 +75,18 @@ const steps = [
 ];
 
 const CollegeAssessment: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<CollegeAssessmentFormData>({
     resume: null,
     academicStatus: {
-      gpa: '',
-      yearStatus: '',
-      majorSubjects: '',
-      extracurriculars: ''
+      gpa: '9.5/10',
+      yearStatus: '3rd year',
+      majorSubjects: 'computer science',
+      extracurriculars: 'Data warehouse, Kaggle sklearn'
     },
-    githubProfile: '',
-    linkedinProfile: '',
-    initialMessage: ''
+    githubProfile: 'https://github.com/sarthakChy',
+    linkedinProfile: 'linkedin.com/in/sarthak-choudhary-603314121/',
+    initialMessage: 'I am a final year B.Tech student specializing in AI/ML. I want to transition into a data engineer role at top tech companies. Can you help me identify skill gaps and provide a learning roadmap?'
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -203,17 +205,37 @@ const CollegeAssessment: React.FC = () => {
     }
 
     setIsSubmitting(true);
+    
+    const apiFormData = new FormData();
+    if (formData.resume) {
+      apiFormData.append('resume', formData.resume);
+    }
+    apiFormData.append('academic_status', JSON.stringify(formData.academicStatus));
+    apiFormData.append('github_profile', JSON.stringify(formData.githubProfile));
+    apiFormData.append('linkedin_profile', JSON.stringify(formData.linkedinProfile));
+    apiFormData.append('initial_message', JSON.stringify(formData.initialMessage));
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
       
-      console.log('Assessment submitted:', {
-        ...formData,
-        userId: 'user_12345',
-        sessionId: 'session_67890'
+      const response = await fetch('http://localhost:8000/api/college-upskilling',{
+        method:'POST',
+        body:apiFormData
       });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const responseData = await response.json();
+      console.log('Submission response:', responseData);
       
-      setSubmitSuccess(true);
+      // Store session ID for results page
+      if (responseData.session_id) {
+        localStorage.setItem('assessment_session_id', responseData.session_id);
+        navigate(`/assessment_results?session_id=${responseData.session_id}`);
+      } else {
+        // Navigate without session ID - will use mock data
+        navigate('/assessment_results');
+      }
     } catch (error) {
       console.error('Submission error:', error);
     } finally {

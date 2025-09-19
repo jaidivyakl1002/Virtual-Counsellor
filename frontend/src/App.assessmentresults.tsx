@@ -4,12 +4,8 @@ import { CacheProvider } from '@emotion/react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import createCache from '@emotion/cache';
 import theme from './theme';
-import LandingPage from './pages/LandingPage';
-import SchoolPage from './pages/School';
-import CollegePage from './pages/College';
-import ProfessionalsPage from './pages/Professional';
-import CollegeAssessment from './pages/CollegeAssessment';
 import AssessmentResultsPage from './pages/AssessmentResultsPage';
+import CollegeAssessment from './pages/CollegeAssessment';
 
 const createEmotionCache = () => {
   return createCache({
@@ -27,14 +23,11 @@ const App: React.FC = () => {
         <CssBaseline />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/school" element={<SchoolPage />} />
-            <Route path="/college" element={<CollegePage />} />
+            <Route path="/" element={<AssessmentResultsPage />} />
             <Route path="/college_test" element={<CollegeAssessment />} />
-            <Route path="/assessment_results" element={<AssessmentResultsPage/>} />
-            <Route path="/professional" element={<ProfessionalsPage />} />
+            <Route path="/assessment_results" element={<AssessmentResultsPage />} />
             {/* Fallback route */}
-            <Route path="*" element={<LandingPage />} />
+            <Route path="*" element={<AssessmentResultsPage />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
