@@ -342,7 +342,8 @@ Remember: This recommendation will significantly impact the student's academic j
     
     def _get_top_aptitudes_and_interests(self, dbda_scores: Dict[str, Any], cii_results: Dict[str, Any]) -> Dict[str, Any]:
         """Extract top aptitudes and interests for analysis"""
-        top_aptitudes = sorted(dbda_scores.items(), key=lambda x: x[1], reverse=True)[:3] if dbda_scores else []
+        valid_scores = {k: v for k, v in dbda_scores.items() if v is not None}
+        top_aptitudes = sorted(valid_scores.items(), key=lambda x: x[1], reverse=True)[:3]
         top_interests = sorted(cii_results.items(), key=lambda x: x[1], reverse=True)[:3] if cii_results else []
         
         return {
@@ -419,7 +420,7 @@ Remember: This recommendation will significantly impact the student's academic j
             return "No DBDA aptitude scores available"
         
         # Sort scores and identify strengths (score >= 7 considered strength)
-        strengths = [(domain, score) for domain, score in dbda_scores.items() if score >= 7]
+        strengths = [(domain, score) for domain, score in dbda_scores.items() if score is not None and score >= 7]
         strengths.sort(key=lambda x: x[1], reverse=True)
         
         if not strengths:

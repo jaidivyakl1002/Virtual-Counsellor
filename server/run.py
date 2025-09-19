@@ -26,6 +26,7 @@ from pydantic import BaseModel, Field, validator
 
 # Import your existing modules
 from agentic_layer.agent_orchestrator import MainOrchestrator, UserData
+from utils.sten_calculator import StenCalculator
 from config.llm_config import llm_manager
 
 # Load environment variables
@@ -43,25 +44,20 @@ logger = logging.getLogger(__name__)
 class DemographicInfo(BaseModel):
     name: Optional[str] = None
     age: Optional[int] = None
-    current_grade: Optional[str] = None
+    current_grade: Optional[int] = None
     school_name: Optional[str] = None
     location: Optional[str] = None
+    gender: Optional[str] = None
 
 class DBDAScores(BaseModel):
-    administrative: float = Field(..., ge=0, le=10)
-    entertainment: float = Field(..., ge=0, le=10)
-    defense: float = Field(..., ge=0, le=10)
-    sports: float = Field(..., ge=0, le=10)
-    creative: float = Field(..., ge=0, le=10)
-    performing: float = Field(..., ge=0, le=10)
-    medical: float = Field(..., ge=0, le=10)
-    technical: float = Field(..., ge=0, le=10)
-    experimental: float = Field(..., ge=0, le=10)
-    computational: float = Field(..., ge=0, le=10)
-    humanitarian: float = Field(..., ge=0, le=10)
-    educational: float = Field(..., ge=0, le=10)
-    nature: float = Field(..., ge=0, le=10)
-    clerical: float = Field(..., ge=0, le=10)
+    CA: Union[str, float, None] = None
+    CL: Union[str, float, None] = None
+    MA: Union[str, float, None] = None
+    NA: Union[str, float, None] = None
+    PM: Union[str, float, None] = None
+    RA: Union[str, float, None] = None
+    SA: Union[str, float, None] = None
+    VA: Union[str, float, None] = None
 
 class CIIResults(BaseModel):
     artistic: int = Field(..., ge=0, le=10)
@@ -227,15 +223,29 @@ def get_orchestrator():
 
 def create_user_data_from_request(data: dict, vertical_type: str) -> UserData:
     """Convert request data to UserData format"""
-    
+    calculator = StenCalculator()
     user_id = data.get("user_id") or f"{vertical_type}_user_{uuid.uuid4().hex[:8]}"
     session_id = data.get("session_id") or f"session_{uuid.uuid4().hex[:8]}"
+    dbda_scores = data.get("dbda_scores")
+    dem_info = data.get("demographic_info", {})  # Add default empty dict
+    grade = dem_info.get("current_grade")
+    gender = dem_info.get("gender", 'male')
+
+    # Calculate sten scores and extract only the sten_score values
+    dbda_sten_results = calculator.calculate_student_stens(dbda_scores, grade=grade, gender=gender)
     
+    # Extract only the sten scores (integers) from the result dictionary
+    dbda_sten_scores = {}
+    for ability, result in dbda_sten_results.items():
+        dbda_sten_scores[ability] = result['sten_score']
+    
+    print("DBDA sten scores", dbda_sten_scores)
+
     user_data: UserData = {
         "user_id": user_id,
         "session_id": session_id,
         "demographic_info": data.get("demographic_info"),
-        "dbda_scores": data.get("dbda_scores"),
+        "dbda_scores": dbda_sten_scores,  # Now contains just integers
         "cii_results": data.get("cii_results"),
         "resume_data": None,
         "github_profile": data.get("github_profile"),

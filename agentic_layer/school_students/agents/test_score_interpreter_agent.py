@@ -284,19 +284,6 @@ Remember: This student is at a crucial stage of identity and career development.
         
         return "\n".join(info_parts) if info_parts else "Basic student profile available"
     
-    def _format_sten_scores(self, scores: Dict[str, Any], assessment_name: str) -> str:
-        """Format sten scores for interpretation (unified for both DBDA and CII)"""
-        if not scores:
-            return f"No {assessment_name} scores available"
-            
-        formatted_lines = [f"{assessment_name} (Sten Scores 1-10):"]
-        
-        for domain, score in scores.items():
-            level = self._categorize_sten_score(score)
-            formatted_lines.append(f"- {domain.replace('_', ' ').title()}: {score}/10 ({level})")
-        
-        return "\n".join(formatted_lines)
-    
     def _format_domains(self, domains: Dict[str, str]) -> str:
         """Format domain descriptions"""
         formatted_lines = []
@@ -316,8 +303,27 @@ Remember: This student is at a crucial stage of identity and career development.
         
         return "\n".join(context_parts) if context_parts else "No additional context provided"
     
+    def _format_sten_scores(self, scores: Dict[str, Any], assessment_name: str) -> str:
+        """Format sten scores for interpretation (unified for both DBDA and CII)"""
+        if not scores:
+            return f"No {assessment_name} scores available"
+            
+        formatted_lines = [f"{assessment_name} (Sten Scores 1-10):"]
+        
+        for domain, score in scores.items():
+            if score is None:
+                formatted_lines.append(f"- {domain.replace('_', ' ').title()}: Not Available")
+            else:
+                level = self._categorize_sten_score(score)
+                formatted_lines.append(f"- {domain.replace('_', ' ').title()}: {score}/10 ({level})")
+        
+        return "\n".join(formatted_lines)
+
     def _categorize_sten_score(self, score: int) -> str:
         """Categorize sten scores into interpretive levels (unified for both assessments)"""
+        if score is None:
+            return "Not Available"
+        
         if score <= 3:
             return "Below Average"
         elif score <= 4:
@@ -332,14 +338,20 @@ Remember: This student is at a crucial stage of identity and career development.
             return "Very High"
         else:
             return "Very High"
-    
+
     def _identify_top_scores(self, scores: Dict[str, Any], domain_descriptions: Dict[str, str]) -> List[Dict[str, Any]]:
         """Identify top scoring areas"""
         if not scores:
             return []
+        
+        # Filter out None values before sorting
+        valid_scores = {k: v for k, v in scores.items() if v is not None}
+        
+        if not valid_scores:
+            return []
             
         # Sort by score and get top 3
-        sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:3]
+        sorted_scores = sorted(valid_scores.items(), key=lambda x: x[1], reverse=True)[:3]
         
         top_areas = []
         for domain, score in sorted_scores:
@@ -351,55 +363,10 @@ Remember: This student is at a crucial stage of identity and career development.
             })
         
         return top_areas
-    
-    def _identify_aptitude_interest_patterns(self, dbda_scores: Dict[str, Any], 
-                                           cii_scores: Dict[str, Any]) -> List[str]:
-        """Identify patterns between aptitudes and interests (updated for correct CII domains)"""
-        patterns = []
-        
-        # Check for science/research patterns
-        if (dbda_scores.get("experimental", 0) >= 7 or dbda_scores.get("technical", 0) >= 7) and \
-           (cii_scores.get("experimental", 0) >= 6 or cii_scores.get("technical", 0) >= 6):
-            patterns.append("Strong science/research alignment between aptitude and interest")
-        
-        # Check for creative patterns
-        if (dbda_scores.get("creative", 0) >= 7 or dbda_scores.get("performing", 0) >= 7) and \
-           (cii_scores.get("creative", 0) >= 6 or cii_scores.get("performing", 0) >= 6):
-            patterns.append("Consistent creative/artistic aptitude and interest")
-        
-        # Check for social/helping patterns  
-        if (dbda_scores.get("humanitarian", 0) >= 7 or dbda_scores.get("educational", 0) >= 7) and \
-           (cii_scores.get("humanitarian", 0) >= 6 or cii_scores.get("educational", 0) >= 6):
-            patterns.append("Strong social service aptitude matching interest")
-        
-        # Check for business/organizational patterns
-        if (dbda_scores.get("administrative", 0) >= 7) and \
-           (cii_scores.get("administrative", 0) >= 6 or cii_scores.get("clerical", 0) >= 6):
-            patterns.append("Business and organizational aptitude-interest alignment")
-            
-        # Check for practical/hands-on patterns
-        if (dbda_scores.get("technical", 0) >= 7 or dbda_scores.get("sports", 0) >= 7) and \
-           (cii_scores.get("technical", 0) >= 6 or cii_scores.get("sports", 0) >= 6):
-            patterns.append("Practical hands-on aptitude and interest convergence")
-        
-        # Check for medical/healthcare patterns
-        if (dbda_scores.get("medical", 0) >= 7) and (cii_scores.get("medical", 0) >= 6):
-            patterns.append("Strong medical/healthcare aptitude and interest alignment")
-            
-        # Check for entertainment/performance patterns
-        if (dbda_scores.get("entertainment", 0) >= 7 or dbda_scores.get("performing", 0) >= 7) and \
-           (cii_scores.get("entertainment", 0) >= 6 or cii_scores.get("performing", 0) >= 6):
-            patterns.append("Entertainment and performance aptitude-interest convergence")
-            
-        # Check for computational/analytical patterns
-        if (dbda_scores.get("computational", 0) >= 7) and (cii_scores.get("computational", 0) >= 6):
-            patterns.append("Strong computational and analytical alignment")
-            
-        return patterns if patterns else ["Aptitude-interest patterns require individual analysis"]
-    
+
     def _assess_test_reliability(self, dbda_scores: Dict[str, Any], 
-                               cii_scores: Dict[str, Any],
-                               optional_data: Dict[str, Any]) -> Dict[str, Any]:
+                            cii_scores: Dict[str, Any],
+                            optional_data: Dict[str, Any]) -> Dict[str, Any]:
         """Assess reliability factors for the assessments"""
         reliability_factors = {
             "overall_reliability": "Good",
@@ -407,12 +374,25 @@ Remember: This student is at a crucial stage of identity and career development.
             "interpretation_confidence": "High"
         }
         
-        # Check for extreme response patterns in DBDA
-        if any(score <= 1 or score >= 10 for score in dbda_scores.values()):
+        # Filter out None values for reliability assessment
+        valid_dbda_scores = [score for score in dbda_scores.values() if score is not None]
+        valid_cii_scores = [score for score in cii_scores.values() if score is not None]
+        
+        # Check for missing data
+        missing_dbda = sum(1 for score in dbda_scores.values() if score is None)
+        missing_cii = sum(1 for score in cii_scores.values() if score is None)
+        
+        if missing_dbda > 0:
+            reliability_factors["factors_affecting_reliability"].append(f"Missing {missing_dbda} DBDA score(s)")
+        
+        if missing_cii > 0:
+            reliability_factors["factors_affecting_reliability"].append(f"Missing {missing_cii} CII score(s)")
+        
+        # Check for extreme response patterns in valid scores only
+        if valid_dbda_scores and any(score <= 1 or score >= 10 for score in valid_dbda_scores):
             reliability_factors["factors_affecting_reliability"].append("Extreme response pattern detected in DBDA")
         
-        # Check for extreme response patterns in CII
-        if any(score <= 1 or score >= 10 for score in cii_scores.values()):
+        if valid_cii_scores and any(score <= 1 or score >= 10 for score in valid_cii_scores):
             reliability_factors["factors_affecting_reliability"].append("Extreme response pattern detected in CII")
         
         # Check age-related factors
@@ -421,15 +401,16 @@ Remember: This student is at a crucial stage of identity and career development.
             reliability_factors["factors_affecting_reliability"].append("Younger age may affect test stability")
             reliability_factors["interpretation_confidence"] = "Moderate"
         
-        # Check for very flat profiles (little differentiation)
-        dbda_range = max(dbda_scores.values()) - min(dbda_scores.values()) if dbda_scores else 0
-        cii_range = max(cii_scores.values()) - min(cii_scores.values()) if cii_scores else 0
+        # Check for very flat profiles (little differentiation) - only with valid scores
+        if valid_dbda_scores and len(valid_dbda_scores) > 1:
+            dbda_range = max(valid_dbda_scores) - min(valid_dbda_scores)
+            if dbda_range <= 2:
+                reliability_factors["factors_affecting_reliability"].append("Low differentiation in DBDA scores")
         
-        if dbda_range <= 2:
-            reliability_factors["factors_affecting_reliability"].append("Low differentiation in DBDA scores")
-            
-        if cii_range <= 2:
-            reliability_factors["factors_affecting_reliability"].append("Low differentiation in CII scores")
+        if valid_cii_scores and len(valid_cii_scores) > 1:
+            cii_range = max(valid_cii_scores) - min(valid_cii_scores)
+            if cii_range <= 2:
+                reliability_factors["factors_affecting_reliability"].append("Low differentiation in CII scores")
         
         # Adjust overall reliability based on factors
         if len(reliability_factors["factors_affecting_reliability"]) >= 2:
@@ -437,6 +418,58 @@ Remember: This student is at a crucial stage of identity and career development.
             reliability_factors["interpretation_confidence"] = "Moderate"
         
         return reliability_factors
+
+    def _identify_aptitude_interest_patterns(self, dbda_scores: Dict[str, Any], 
+                                        cii_scores: Dict[str, Any]) -> List[str]:
+        """Identify patterns between aptitudes and interests (updated for actual DBDA field names)"""
+        patterns = []
+        
+        # Helper function to safely get score with None check
+        def safe_get_score(scores_dict, key, default=0):
+            score = scores_dict.get(key, default)
+            return score if score is not None else default
+        
+        # Check for creative/artistic patterns (VA = Visual Arts, CA = Creative Arts)
+        if (safe_get_score(dbda_scores, "VA") >= 7 or safe_get_score(dbda_scores, "CA") >= 7) and \
+        (safe_get_score(cii_scores, "creative") >= 6 or safe_get_score(cii_scores, "performing") >= 6):
+            patterns.append("Strong creative/artistic aptitude and interest alignment")
+        
+        # Check for analytical/computational patterns (RA = Reasoning/Analytical, MA = Mathematical)
+        if (safe_get_score(dbda_scores, "RA") >= 7 or safe_get_score(dbda_scores, "MA") >= 7) and \
+        (safe_get_score(cii_scores, "computational") >= 6 or safe_get_score(cii_scores, "experimental") >= 6):
+            patterns.append("Strong analytical and computational aptitude-interest convergence")
+        
+        # Check for social/helping patterns (SA = Social Aptitude)
+        if (safe_get_score(dbda_scores, "SA") >= 7) and \
+        (safe_get_score(cii_scores, "humanitarian") >= 6 or safe_get_score(cii_scores, "educational") >= 6):
+            patterns.append("Excellent social aptitude matching helping/educational interests")
+        
+        # Check for clerical/administrative patterns (CL = Clerical)
+        if (safe_get_score(dbda_scores, "CL") >= 7) and \
+        (safe_get_score(cii_scores, "administrative") >= 6 or safe_get_score(cii_scores, "clerical") >= 6):
+            patterns.append("Strong clerical aptitude with administrative interest alignment")
+        
+        # Check for nature/outdoor patterns (NA = Nature Aptitude)
+        if (safe_get_score(dbda_scores, "NA") >= 7) and \
+        (safe_get_score(cii_scores, "nature") >= 6 or safe_get_score(cii_scores, "sports") >= 6):
+            patterns.append("Nature aptitude aligns with outdoor and environmental interests")
+        
+        # Check for technical/practical patterns (PM = Practical/Mechanical - if available)
+        if (safe_get_score(dbda_scores, "PM") >= 7) and \
+        (safe_get_score(cii_scores, "technical") >= 6 or safe_get_score(cii_scores, "sports") >= 6):
+            patterns.append("Practical/mechanical aptitude matches technical interests")
+        
+        # Check for medical/healthcare patterns (MA could relate to medical sciences)
+        if (safe_get_score(dbda_scores, "MA") >= 7 or safe_get_score(dbda_scores, "RA") >= 7) and \
+        (safe_get_score(cii_scores, "medical") >= 6):
+            patterns.append("Mathematical/analytical aptitude supports medical interest")
+        
+        # Check for entertainment/performance patterns (VA, CA could support entertainment)
+        if (safe_get_score(dbda_scores, "VA") >= 7 or safe_get_score(dbda_scores, "CA") >= 7) and \
+        (safe_get_score(cii_scores, "entertainment") >= 6 or safe_get_score(cii_scores, "performing") >= 6):
+            patterns.append("Creative aptitudes strongly support entertainment and performance interests")
+            
+        return patterns if patterns else ["Aptitude-interest patterns require individual analysis"]
     
     def _parse_llm_response(self, response) -> Dict[str, Any]:
         """Strict JSON parsing without fallback - raises exceptions on failure"""
