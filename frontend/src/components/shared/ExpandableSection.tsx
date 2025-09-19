@@ -12,6 +12,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 const StyledAccordion = styled(Accordion)(({ theme }) => ({
   boxShadow: 'none',
   border: `1px solid ${theme.palette.divider}`,
+   width: '100%',
   borderRadius: theme.shape.borderRadius,
   '&:not(:last-child)': {
     borderBottom: 0,

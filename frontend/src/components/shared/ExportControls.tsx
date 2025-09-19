@@ -100,11 +100,22 @@ const ExportControls: React.FC<ExportControlsProps> = ({
             overflow: 'visible',
             filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
             mt: 1.5,
-            minWidth: 200
+            minWidth: { xs: '100%', sm: 240 },
+            width: { xs: '100%', sm: 'auto' },
+            maxWidth: { xs: '100vw', sm: 320 }
           }
         }}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        slotProps={{
+          root: {
+            sx: {
+              '& .MuiPaper-root': {
+                width: { xs: '100%', sm: 'auto' }
+              }
+            }
+          }
+        }}
       >
         <MenuItem onClick={() => handleMenuAction(onDownloadJSON || (() => {}))}>
           <ListItemIcon>

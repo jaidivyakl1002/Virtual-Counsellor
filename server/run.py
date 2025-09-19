@@ -157,7 +157,6 @@ app.add_middleware(
         "http://localhost:3000",
         "http://localhost:8000",
         "http://localhost:5173",
-        "https://yourfrontenddomain.com"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -192,7 +191,7 @@ def update_session_status(session_id: str, status: SessionStatus, data: Optional
 def get_session_status(session_id: str) -> Dict[str, Any]:
     """Get current session status and data"""
     with session_lock:
-        return session_storage.get(session_id, {
+        return session_storage.get(session_id, { 
             "status": SessionStatus.PENDING,
             "updated_at": None,
             "data": None,
@@ -577,8 +576,13 @@ async def analyze_college_student_with_resume(
         update_session_status(session_id_final, SessionStatus.PENDING)
         
         # Set default message
-        initial_message_final = initial_message or "I want comprehensive career guidance and skill development recommendations based on my profile."
+        initial_message_final = json.loads(initial_message) or "I want comprehensive career guidance and skill development recommendations based on my profile."
         
+        logger.info({
+            "user_data": user_data,
+            "initial_message": initial_message_final,
+            "session_id": session_id_final
+        })
         # Add background task
         background_tasks.add_task(
             process_college_upskilling_background,

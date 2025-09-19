@@ -30,14 +30,14 @@ const AssessmentResultsPage: React.FC = () => {
         }
 
         // Try to fetch real data from API
-        const response = await fetch(`http://localhost:8000/api/assessment-results/${sessionId}`);
+        const response = await fetch(`http://localhost:8000/api/status/${sessionId}`);
         
         if (!response.ok) {
           throw new Error(`Failed to fetch assessment results: ${response.status}`);
         }
 
         const data: AssessmentResultsResponse = await response.json();
-        
+        console.log('Fetched assessment data:', data);
         if (!data || !data.success) {
           throw new Error('Invalid assessment data received');
         }
