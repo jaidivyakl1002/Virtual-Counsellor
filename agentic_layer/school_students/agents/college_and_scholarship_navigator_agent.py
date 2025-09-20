@@ -462,7 +462,8 @@ Remember: This guidance will influence major life decisions and financial commit
         
         # Assessment insights
         if optional_data.get("dbda_scores"):
-            top_aptitudes = sorted(optional_data["dbda_scores"].items(), key=lambda x: x[1], reverse=True)[:2]
+            valid_scores = {k: v for k, v in optional_data["dbda_scores"].items() if v is not None}
+            top_aptitudes = sorted(valid_scores.items(), key=lambda x: x[1], reverse=True)[:2]
             aptitude_summary = ", ".join([apt.replace('_', ' ').title() for apt, _ in top_aptitudes])
             profile_parts.append(f"Top Aptitude Areas: {aptitude_summary}")
         
@@ -568,14 +569,15 @@ Remember: This guidance will influence major life decisions and financial commit
         # Assessment scores
         if optional_data.get("dbda_scores"):
             scores = optional_data["dbda_scores"]
-            avg_score = sum(scores.values()) / len(scores) if scores else 0
+            valid_scores = {k: v for k, v in scores.items() if v is not None}
+            avg_score = sum(valid_scores.values()) / len(valid_scores) if valid_scores else 0
             achievement_parts.append(f"Aptitude Assessment: Average score {avg_score:.1f}")
         
         # Extracurricular achievements
         if optional_data.get("extracurricular_activities"):
             achievement_parts.append("Strong extracurricular engagement")
         
-        return "\n".join(achievement_parts) if achievement_parts else "Academic profile under assessment"
+        return "\n".join(achievement_parts)
     
     def _consolidate_assessment_insights(self, test_interpreter_result, stream_advisor_result) -> str:
         """Consolidate insights from assessment interpretation"""

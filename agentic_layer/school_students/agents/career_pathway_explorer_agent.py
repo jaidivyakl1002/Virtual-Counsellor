@@ -568,7 +568,8 @@ Remember: This exploration should inspire the student while providing practical,
         insights_parts = ["Aptitude-Based Career Insights:"]
         
         # Identify top aptitudes
-        top_aptitudes = sorted(dbda_scores.items(), key=lambda x: x[1], reverse=True)[:4]
+        valid_scores = {k: v for k, v in dbda_scores.items() if v is not None}
+        top_aptitudes = sorted(valid_scores.items(), key=lambda x: x[1], reverse=True)[:4]
         
         for aptitude, score in top_aptitudes:
             aptitude_clean = aptitude.replace('_', ' ').title()

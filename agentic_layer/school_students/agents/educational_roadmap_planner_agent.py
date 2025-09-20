@@ -535,7 +535,8 @@ Remember: This roadmap will guide critical educational decisions. Provide practi
         
         # Learning preferences and strengths (from assessments if available)
         if optional_data.get("dbda_scores"):
-            top_aptitudes = sorted(optional_data["dbda_scores"].items(), key=lambda x: x[1], reverse=True)[:2]
+            valid_scores = {k: v for k, v in optional_data["dbda_scores"].items() if v is not None}
+            top_aptitudes = sorted(valid_scores.items(), key=lambda x: x[1], reverse=True)[:2]
             aptitude_summary = ", ".join([apt.replace('_', ' ').title() for apt, _ in top_aptitudes])
             profile_parts.append(f"Top Aptitude Areas: {aptitude_summary}")
         
