@@ -56,7 +56,7 @@ class JobScraper:
                 break
         
         if not job_id and index is not None:
-            job_id = f"job_{index:04d}"
+            job_id = f"{self.site_name}_{index:04d}"
         elif not job_id:
             job_id = "unknown_job"
         
@@ -275,7 +275,7 @@ async def main():
     try:
         # Step 1: Get job URLs
         print("=== Step 1: Scraping Job URLs ===")
-        job_urls = await naukri_scraper.scrape_job_urls(
+        job_urls = await glassdoor_scraper.scrape_job_urls(
             search_term="python",
             location="Bangalore",
             results_wanted=3
@@ -289,14 +289,14 @@ async def main():
         
         
         print("\n=== Step 2: Extracting Job Descriptions ===")
-        results = await naukri_scraper.scrape_job_batch(
+        results = await glassdoor_scraper.scrape_job_batch(
             urls=job_urls,
             batch_size=3,  # Small batch size to be respectful
             delay=3.0      # 3 second delay between batches
         )
         
         print("\n=== Step 3: Saving Results ===")
-        naukri_scraper.save_results(results)
+        glassdoor_scraper.save_results(results)
 
     except Exception as e:
         print(f"An error occurred: {e}")
