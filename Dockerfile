@@ -1,32 +1,23 @@
-# Build stage
-FROM python:3.11-alpine AS builder
+# Use Alpine Linux for minimal size
+FROM python:3.11-alpine
 
-# Install build dependencies
+# Install only essential build dependencies
 RUN apk add --no-cache \
     gcc \
     musl-dev \
     libffi-dev \
-    g++ \
     && rm -rf /var/cache/apk/*
 
 WORKDIR /app
 
-# Install dependencies
+# Copy and install requirements first (for better caching)
 COPY requirements.txt .
+
+# Install Python dependencies and clean up build deps in one layer
 RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir --user -r requirements.txt
-
-# Production stage
-FROM python:3.11-alpine AS production
-
-# Install only runtime dependencies (if any)
-RUN apk add --no-cache \
-    && rm -rf /var/cache/apk/*
-
-WORKDIR /app
-
-# Copy installed packages from builder
-COPY --from=builder /root/.local /root/.local
+    && pip install --no-cache-dir -r requirements.txt \
+    && apk del gcc musl-dev libffi-dev \
+    && rm -rf /root/.cache/pip
 
 # Copy only the necessary Python modules
 COPY agentic_layer/ ./agentic_layer/
@@ -41,14 +32,12 @@ COPY utils/ ./utils/
 # Copy any root-level Python files
 COPY *.py ./
 
-# Create non-root user
+# Create non-root user for security
 RUN adduser -D -s /bin/sh appuser \
     && chown -R appuser:appuser /app
 USER appuser
 
-# Make sure scripts in .local are usable
-ENV PATH=/root/.local/bin:$PATH
-
 EXPOSE 8080
 
+# Use exec form to ensure proper signal handling
 CMD ["uvicorn", "server.run:app", "--host", "0.0.0.0", "--port", "8080"]
