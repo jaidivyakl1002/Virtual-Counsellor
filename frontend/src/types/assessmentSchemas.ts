@@ -1,5 +1,30 @@
 import { AssessmentSection, QuestionType, AnswerOption, SameDifferentOption } from './assessmentEnums';
 
+// Basic Information Form Data
+export interface BasicInfoFormData {
+  studentName: string;
+  currentGrade: string;
+  currentStream: string;
+  subjects: string[];
+  academicPerformance: string;
+  interests: string[];
+  careerAspirations: string;
+  parentContact: string;
+  additionalInfo: string;
+}
+
+// Form validation errors
+export interface BasicInfoFormErrors {
+  studentName?: string;
+  currentGrade?: string;
+  currentStream?: string;
+  subjects?: string;
+  academicPerformance?: string;
+  interests?: string;
+  careerAspirations?: string;
+  parentContact?: string;
+}
+
 // Assessment form data types
 export interface AssessmentQuestion {
   id: string;
@@ -24,8 +49,11 @@ export interface AssessmentFormData {
 }
 
 export interface AssessmentState {
+  currentStep: 'basic-info' | 'assessment';
   currentSection: AssessmentSection;
   answers: AssessmentFormData;
+  basicInfoData: BasicInfoFormData;
+  basicInfoComplete: boolean;
   isComplete: boolean;
   sectionProgress: Record<AssessmentSection, boolean>;
 }

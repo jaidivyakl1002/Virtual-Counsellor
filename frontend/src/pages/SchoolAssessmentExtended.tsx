@@ -6,7 +6,8 @@ import {
   Stack,
   Alert,
   Backdrop,
-  CircularProgress
+  CircularProgress,
+  Button
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
@@ -15,9 +16,11 @@ import Footer from '../components/Footer';
 import AssessmentSection from '../components/school-assessment/AssessmentSection';
 import AssessmentNavigation from '../components/school-assessment/AssessmentNavigation';
 import ProgressIndicator from '../components/school-assessment/ProgressIndicator';
+import BasicInfoForm from '../components/school-assessment/BasicInfoForm';
 import { mockAssessmentQuestions } from '../data/schoolAssessmentMockData';
 import { AssessmentSection as AssessmentSectionEnum, AnswerOption, SameDifferentOption } from '../types/assessmentEnums';
-import { AssessmentFormData, AssessmentState } from '../types/assessmentSchemas';
+import { AssessmentFormData, AssessmentState, BasicInfoFormData, BasicInfoFormErrors } from '../types/assessmentSchemas';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
@@ -40,6 +43,11 @@ const AssessmentContainer = styled(Box)(({ theme }) => ({
   position: 'relative'
 }));
 
+const BackButton = styled(Button)(({ theme }) => ({
+  marginBottom: theme.spacing(3),
+  textTransform: 'none',
+  fontWeight: 500
+}));
 
 const initialFormData: AssessmentFormData = {
   [AssessmentSectionEnum.VERBAL_SYNONYMS]: {
@@ -74,11 +82,26 @@ const initialFormData: AssessmentFormData = {
   }
 };
 
+const initialBasicInfoData: BasicInfoFormData = {
+  studentName: 'Sarthak',
+  currentGrade: '9th grade',
+  currentStream: 'Computer Science',
+  subjects: ['Mathematics', 'Software Development','Web Development'],
+  academicPerformance: '9.5 GPA',
+  interests: ['AI','ML','Blockchain'],
+  careerAspirations: 'I want to become a software developer and work on innovative tech solutions that can make a positive impact on society.',
+  parentContact: '9871345647',
+  additionalInfo: ''
+};
+
 const SchoolAssessmentExtended: React.FC = () => {
   const navigate = useNavigate();
   const [assessmentState, setAssessmentState] = useState<AssessmentState>({
+    currentStep: 'basic-info',
     currentSection: AssessmentSectionEnum.VERBAL_SYNONYMS,
     answers: initialFormData,
+    basicInfoData: initialBasicInfoData,
+    basicInfoComplete: false,
     isComplete: false,
     sectionProgress: {
       [AssessmentSectionEnum.VERBAL_SYNONYMS]: false,
@@ -92,6 +115,24 @@ const SchoolAssessmentExtended: React.FC = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [basicInfoErrors, setBasicInfoErrors] = useState<BasicInfoFormErrors>({});
+
+  // Load saved data from localStorage on component mount
+  useEffect(() => {
+    const savedBasicInfo = localStorage.getItem('school_assessment_basic_info');
+    if (savedBasicInfo) {
+      try {
+        const parsedData = JSON.parse(savedBasicInfo);
+        setAssessmentState(prev => ({
+          ...prev,
+          basicInfoData: parsedData,
+          basicInfoComplete: true
+        }));
+      } catch (error) {
+        console.error('Error parsing saved basic info:', error);
+      }
+    }
+  }, []);
 
   const sections = [
     AssessmentSectionEnum.VERBAL_SYNONYMS,
@@ -105,6 +146,96 @@ const SchoolAssessmentExtended: React.FC = () => {
   const currentSectionIndex = sections.indexOf(assessmentState.currentSection);
   const isLastSection = currentSectionIndex === sections.length - 1;
   const canGoPrevious = currentSectionIndex > 0;
+
+  // Validation function for basic info
+  const validateBasicInfo = (data: BasicInfoFormData): BasicInfoFormErrors => {
+    const errors: BasicInfoFormErrors = {};
+
+    if (!data.studentName.trim()) {
+      errors.studentName = 'Student name is required';
+    }
+
+    if (!data.currentGrade) {
+      errors.currentGrade = 'Current grade is required';
+    }
+
+    if (!data.currentStream) {
+      errors.currentStream = 'Current stream is required';
+    }
+
+    if (data.subjects.length === 0) {
+      errors.subjects = 'Please select at least one subject';
+    }
+
+    if (!data.academicPerformance.trim()) {
+      errors.academicPerformance = 'Academic performance description is required';
+    }
+
+    if (data.interests.length === 0) {
+      errors.interests = 'Please select at least one interest area';
+    }
+
+    if (!data.careerAspirations.trim()) {
+      errors.careerAspirations = 'Career aspirations are required';
+    }
+
+    if (!data.parentContact.trim()) {
+      errors.parentContact = 'Parent/Guardian contact is required';
+    }
+
+    return errors;
+  };
+
+  // Handle basic info form input changes
+  const handleBasicInfoChange = useCallback((field: keyof BasicInfoFormData, value: string | string[]) => {
+    setAssessmentState(prev => ({
+      ...prev,
+      basicInfoData: {
+        ...prev.basicInfoData,
+        [field]: value
+      }
+    }));
+
+    // Clear error for this field
+    if (basicInfoErrors[field]) {
+      setBasicInfoErrors(prev => ({
+        ...prev,
+        [field]: undefined
+      }));
+    }
+  }, [basicInfoErrors]);
+
+  // Handle basic info form submission
+  const handleBasicInfoSubmit = useCallback(() => {
+    const errors = validateBasicInfo(assessmentState.basicInfoData);
+    
+    if (Object.keys(errors).length > 0) {
+      setBasicInfoErrors(errors);
+      return;
+    }
+
+    // Save to localStorage
+    //localStorage.setItem('school_assessment_basic_info', JSON.stringify(assessmentState.basicInfoData));
+
+    // Move to assessment step
+    setAssessmentState(prev => ({
+      ...prev,
+      currentStep: 'assessment',
+      basicInfoComplete: true
+    }));
+
+    setBasicInfoErrors({});
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [assessmentState.basicInfoData]);
+
+  // Handle back to basic info
+  const handleBackToBasicInfo = useCallback(() => {
+    setAssessmentState(prev => ({
+      ...prev,
+      currentStep: 'basic-info'
+    }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   // Check if current section is complete
   const isCurrentSectionComplete = useCallback(() => {
@@ -120,15 +251,17 @@ const SchoolAssessmentExtended: React.FC = () => {
 
   // Update section progress when answers change
   useEffect(() => {
-    const isComplete = isCurrentSectionComplete();
-    setAssessmentState(prev => ({
-      ...prev,
-      sectionProgress: {
-        ...prev.sectionProgress,
-        [prev.currentSection]: isComplete
-      }
-    }));
-  }, [assessmentState.answers, assessmentState.currentSection, isCurrentSectionComplete]);
+    if (assessmentState.currentStep === 'assessment') {
+      const isComplete = isCurrentSectionComplete();
+      setAssessmentState(prev => ({
+        ...prev,
+        sectionProgress: {
+          ...prev.sectionProgress,
+          [prev.currentSection]: isComplete
+        }
+      }));
+    }
+  }, [assessmentState.answers, assessmentState.currentSection, assessmentState.currentStep, isCurrentSectionComplete]);
 
   const handleAnswerChange = useCallback((questionId: string, answer: AnswerOption | SameDifferentOption) => {
     setAssessmentState(prev => ({
@@ -156,7 +289,6 @@ const SchoolAssessmentExtended: React.FC = () => {
         currentSection: sections[currentSectionIndex + 1]
       }));
       setValidationError(null);
-      // Scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [canGoNext, currentSectionIndex, sections]);
@@ -168,7 +300,6 @@ const SchoolAssessmentExtended: React.FC = () => {
         currentSection: sections[currentSectionIndex - 1]
       }));
       setValidationError(null);
-      // Scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [canGoPrevious, currentSectionIndex, sections]);
@@ -195,12 +326,12 @@ const SchoolAssessmentExtended: React.FC = () => {
 
     setIsSubmitting(true);
 
-    
     try {
-      // Combine with existing form data from localStorage if available
-      const existingFormData = localStorage.getItem('school_assessment_form_data');
+      // Combine basic info with assessment answers
+      await new Promise(resolve => setTimeout(resolve, 5000));
+
       const combinedData = {
-        ...existingFormData ? JSON.parse(existingFormData) : {},
+        ...assessmentState.basicInfoData,
         assessmentAnswers: assessmentState.answers,
         assessmentCompleted: true,
         assessmentCompletedAt: new Date().toISOString()
@@ -232,12 +363,11 @@ const SchoolAssessmentExtended: React.FC = () => {
       }
     } catch (error) {
       console.error('School assessment submission error:', error);
+      
       // Navigate to results with mock data on error
       navigate('/school_assessment_results');
     } finally {
-      setTimeout(() => {
-        setIsSubmitting(false);
-      }, 10000);
+      setIsSubmitting(false);
     }
   };
 
@@ -262,7 +392,7 @@ const SchoolAssessmentExtended: React.FC = () => {
               mb: 2
             }}
           >
-            Aptitude Assessment
+            {assessmentState.currentStep === 'basic-info' ? 'Student Information' : 'Aptitude Assessment'}
           </Typography>
           <Typography 
             variant="h6" 
@@ -273,7 +403,10 @@ const SchoolAssessmentExtended: React.FC = () => {
               mx: 'auto'
             }}
           >
-            Complete this comprehensive aptitude test to help us provide personalized academic and career guidance.
+            {assessmentState.currentStep === 'basic-info' 
+              ? 'Please provide your basic information to get started with the assessment.'
+              : 'Complete this comprehensive aptitude test to help us provide personalized academic and career guidance.'
+            }
           </Typography>
         </Container>
       </HeaderSection>
@@ -281,9 +414,22 @@ const SchoolAssessmentExtended: React.FC = () => {
       <ContentContainer maxWidth="lg">
         <Stack spacing={4}>
           <ProgressIndicator
+            currentStep={assessmentState.currentStep}
             currentSection={assessmentState.currentSection}
             completedSections={completedSections}
+            basicInfoComplete={assessmentState.basicInfoComplete}
           />
+
+          {assessmentState.currentStep === 'assessment' && (
+            <BackButton
+              startIcon={<ArrowBackIcon />}
+              onClick={handleBackToBasicInfo}
+              variant="outlined"
+              sx={{ alignSelf: 'flex-start' }}
+            >
+              Back to Basic Information
+            </BackButton>
+          )}
 
           {validationError && (
             <Alert severity="warning" sx={{ maxWidth: '800px', mx: 'auto' }}>
@@ -291,24 +437,34 @@ const SchoolAssessmentExtended: React.FC = () => {
             </Alert>
           )}
 
-          <AssessmentContainer>
-            <AssessmentSection
-              section={assessmentState.currentSection}
-              questions={mockAssessmentQuestions[assessmentState.currentSection]}
-              answers={assessmentState.answers[assessmentState.currentSection]}
-              onAnswerChange={handleAnswerChange}
+          {assessmentState.currentStep === 'basic-info' ? (
+            <BasicInfoForm
+              formData={assessmentState.basicInfoData}
+              errors={basicInfoErrors}
+              onInputChange={handleBasicInfoChange}
+              onSubmit={handleBasicInfoSubmit}
+              isSubmitting={false}
             />
-          </AssessmentContainer>
+          ) : (
+            <AssessmentContainer>
+              <AssessmentSection
+                section={assessmentState.currentSection}
+                questions={mockAssessmentQuestions[assessmentState.currentSection]}
+                answers={assessmentState.answers[assessmentState.currentSection]}
+                onAnswerChange={handleAnswerChange}
+              />
 
-          <AssessmentNavigation
-            currentSection={assessmentState.currentSection}
-            canGoNext={canGoNext}
-            canGoPrevious={canGoPrevious}
-            isLastSection={isLastSection}
-            onNext={handleNext}
-            onPrevious={handlePrevious}
-            onSubmit={handleSubmit}
-          />
+              <AssessmentNavigation
+                currentSection={assessmentState.currentSection}
+                canGoNext={canGoNext}
+                canGoPrevious={canGoPrevious}
+                isLastSection={isLastSection}
+                onNext={handleNext}
+                onPrevious={handlePrevious}
+                onSubmit={handleSubmit}
+              />
+            </AssessmentContainer>
+          )}
         </Stack>
       </ContentContainer>
 
