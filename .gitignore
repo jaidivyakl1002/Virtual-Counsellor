@@ -46,7 +46,6 @@ ENV/
 Thumbs.db
 
 # Data files
-data/
 *.db
 *.sqlite
 

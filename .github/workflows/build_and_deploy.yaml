@@ -47,7 +47,7 @@ jobs:
           --platform managed \
           --region ${{ secrets.GCP_LOCATION }} \
           --port 8080 \
-          --memory 512Mi \
+          --memory 4Gi \
           --cpu 1 \
           --project ${{ secrets.GCP_PROJECT_ID }} \
           --service-account ${{ secrets.GCP_PROJECT_SA_NAME }} \
