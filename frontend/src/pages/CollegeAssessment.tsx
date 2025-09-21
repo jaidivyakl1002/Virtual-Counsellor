@@ -216,7 +216,7 @@ const CollegeAssessment: React.FC = () => {
     apiFormData.append('initial_message', JSON.stringify(formData.initialMessage));
     try {
       
-      const response = await fetch('http://localhost:8000/api/college-upskilling',{
+      const response = await fetch('https://my-service-prod-1015057250826.us-central1.run.app/api/college-upskilling',{
         method:'POST',
         body:apiFormData
       });
