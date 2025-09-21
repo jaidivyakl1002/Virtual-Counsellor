@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Box,
   Typography,
   RadioGroup,
   FormControlLabel,
@@ -9,7 +8,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { AssessmentQuestion as AssessmentQuestionType } from '../../types/assessmentSchemas';
-import { AnswerOption, SameDifferentOption, QuestionType } from '../../types/assessmentEnums';
+import { AnswerOption, SameDifferentOption } from '../../types/assessmentEnums';
 
 const QuestionContainer = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),

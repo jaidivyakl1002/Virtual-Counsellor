@@ -3,7 +3,7 @@ import { Container, Typography, Button, Stack, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AssessmentModal from './AssessmentModal';
 
-const HeroContainer = styled(Box)(({ theme }) => ({
+const HeroContainer = styled(Box)(({  }) => ({
   background: 'linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%)',
   minHeight: '100vh',
   display: 'flex',
@@ -11,13 +11,13 @@ const HeroContainer = styled(Box)(({ theme }) => ({
   paddingTop: '80px'
 }));
 
-const HeroContent = styled(Stack)(({ theme }) => ({
+const HeroContent = styled(Stack)(({  }) => ({
   alignItems: 'flex-start',
   maxWidth: '600px',
   zIndex: 2
 }));
 
-const PrimaryButton = styled(Button)(({ theme }) => ({
+const PrimaryButton = styled(Button)(({  }) => ({
   background: 'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%)',
   color: 'white',
   fontWeight: 600,
@@ -48,7 +48,7 @@ const SecondaryButton = styled(Button)(({ theme }) => ({
   transition: 'all 0.3s ease'
 }));
 
-const HeroImage = styled('img')(({ theme }) => ({
+const HeroImage = styled('img')(({  }) => ({
   width: '100%',
   maxWidth: '600px',
   height: 'auto',

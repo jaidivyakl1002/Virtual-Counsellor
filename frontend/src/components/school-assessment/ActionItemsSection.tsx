@@ -13,7 +13,7 @@ import {
   ListItemIcon,
   Checkbox,
   LinearProgress,
-  Divider
+  
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import ChecklistOutlinedIcon from '@mui/icons-material/ChecklistOutlined';
@@ -45,7 +45,7 @@ const ActionCard = styled(Card)(({ theme }) => ({
   }
 }));
 
-const ImplementButton = styled(Button)(({ theme }) => ({
+const ImplementButton = styled(Button)(({  }) => ({
   background: 'linear-gradient(135deg, #146C94 0%, #19A7CE 100%)',
   color: 'white',
   fontWeight: 600,

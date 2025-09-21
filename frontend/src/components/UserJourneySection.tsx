@@ -5,13 +5,13 @@ import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 
-const SectionContainer = styled(Box)(({ theme }) => ({
+const SectionContainer = styled(Box)(({  }) => ({
   background: 'linear-gradient(135deg, #BFDBFE 0%, #93C5FD 100%)',
   padding: '100px 0',
   position: 'relative'
 }));
 
-const JourneyCard = styled(Card)(({ theme }) => ({
+const JourneyCard = styled(Card)(({  }) => ({
   height: '100%',
   padding: '40px 30px',
   textAlign: 'center',
@@ -26,7 +26,7 @@ const JourneyCard = styled(Card)(({ theme }) => ({
   }
 }));
 
-const IconWrapper = styled(Box)(({ theme }) => ({
+const IconWrapper = styled(Box)(({  }) => ({
   width: '80px',
   height: '80px',
   borderRadius: '50%',

@@ -3,7 +3,7 @@ import { Box, Container, Typography, Button, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AssessmentModal from './AssessmentModal';
 
-const CTAContainer = styled(Box)(({ theme }) => ({
+const CTAContainer = styled(Box)(({  }) => ({
   background: 'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%)',
   color: 'white',
   padding: '80px 0',

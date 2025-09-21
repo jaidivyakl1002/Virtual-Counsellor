@@ -48,7 +48,7 @@ const SuccessProbabilityContainer = styled(Box)(({ theme }) => ({
   textAlign: 'center'
 }));
 
-const ApplyButton = styled(Button)(({ theme }) => ({
+const ApplyButton = styled(Button)(({  }) => ({
   background: 'linear-gradient(135deg, #146C94 0%, #19A7CE 100%)',
   color: 'white',
   fontWeight: 600,
@@ -114,7 +114,7 @@ const OpportunityMatchingSection: React.FC<OpportunityMatchingSectionProps> = ({
 
       {/* Matched Opportunities */}
       <Stack spacing={3}>
-        {matched_opportunities.map((opportunity, index) => {
+        {matched_opportunities.map((opportunity) => {
           const successProb = getSuccessProbability(opportunity.opportunity_id);
           const compatibility = compatibility_analysis[opportunity.opportunity_id];
           const preparation = preparation_requirements[opportunity.opportunity_id];

@@ -5,7 +5,6 @@ import {
   SkillLevel,
   IndustryDomain,
   JobType,
-  LocationType
 } from '../types/assessmentResultsTypes';
 
 export const createMockAssessmentData = (): AssessmentResultsResponse => {

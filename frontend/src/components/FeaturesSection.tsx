@@ -6,7 +6,7 @@ import ShowChartOutlinedIcon from '@mui/icons-material/ShowChartOutlined';
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 
-const SectionContainer = styled(Box)(({ theme }) => ({
+const SectionContainer = styled(Box)(({  }) => ({
   backgroundColor: '#F1F5F9',
   padding: '100px 0',
   position: 'relative'
@@ -27,7 +27,7 @@ const FeatureCard = styled(Card)(({ theme }) => ({
   }
 }));
 
-const IconWrapper = styled(Box)(({ theme }) => ({
+const IconWrapper = styled(Box)(({  }) => ({
   width: '70px',
   height: '70px',
   borderRadius: '16px',

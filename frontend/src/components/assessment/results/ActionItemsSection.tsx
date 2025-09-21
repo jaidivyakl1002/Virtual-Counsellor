@@ -29,7 +29,7 @@ const ActionCard = styled(Card)(({ theme }) => ({
   boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
 }));
 
-const ActionButton = styled(Button)(({ theme }) => ({
+const ActionButton = styled(Button)(({  }) => ({
   background: 'linear-gradient(135deg, #146C94 0%, #19A7CE 100%)',
   color: 'white',
   fontWeight: 600,

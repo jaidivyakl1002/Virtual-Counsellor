@@ -129,7 +129,7 @@ const SchoolAssessmentResultsPage: React.FC = () => {
       <SchoolAssessmentResults
         assessmentData={{ success: false } as SchoolAssessmentResponse}
         isLoading={true}
-        error={null}
+        // error={null}
         onBackToAssessment={handleBackToAssessment}
       />
     );
@@ -139,7 +139,7 @@ const SchoolAssessmentResultsPage: React.FC = () => {
     <SchoolAssessmentResults
       assessmentData={assessmentData}
       isLoading={isLoading}
-      error={error}
+      // error={error}
       showExportOptions={true}
       enableActionTracking={true}
       onActionItemClick={handleActionItemClick}

@@ -12,7 +12,7 @@ import CrisisAlertOutlinedIcon from '@mui/icons-material/CrisisAlertOutlined';
 import LocalLibraryOutlinedIcon from '@mui/icons-material/LocalLibraryOutlined';
 import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined';
 
-const ContentSection = styled(Box)(({ theme }) => ({
+const ContentSection = styled(Box)(({  }) => ({
   padding: '80px 0'
 }));
 

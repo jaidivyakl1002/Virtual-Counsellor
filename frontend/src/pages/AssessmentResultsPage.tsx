@@ -68,10 +68,6 @@ const AssessmentResultsPage: React.FC = () => {
     // Implement download logic here
   };
 
-  const handleShareResults = (platform: 'linkedin' | 'email') => {
-    console.log(`Sharing results on ${platform}`);
-    // Implement sharing logic here
-  };
 
   const handleSaveResults = (notes?: string) => {
     console.log('Saving results with notes:', notes);
@@ -108,13 +104,13 @@ const AssessmentResultsPage: React.FC = () => {
     <AssessmentResults
       assessmentData={assessmentData}
       isLoading={isLoading}
-      error={error}
+      // error={error}
       showExportOptions={true}
       enableActionTracking={true}
       onActionItemClick={handleActionItemClick}
       onOpportunityApply={handleOpportunityApply}
       onDownloadReport={handleDownloadReport}
-      onShareResults={handleShareResults}
+      // onShareResults={handleShareResults}
       onSaveResults={handleSaveResults}
       onBackToAssessment={handleBackToAssessment}
       onStartImplementation={handleStartImplementation}

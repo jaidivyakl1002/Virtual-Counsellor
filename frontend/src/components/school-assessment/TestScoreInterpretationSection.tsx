@@ -16,8 +16,8 @@ import { BarChart, PieChart } from '@mui/x-charts';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import ConfidenceIndicator from '../shared/ConfidenceIndicator';
-import { TestScoreOutput, AptitudeScore, InterestScore } from '../../types/schoolAssessmentTypes';
-import { formatAptitudeDomain, formatInterestDomain, formatStenScore } from '../../utils/schoolAssessmentFormatters';
+import { TestScoreOutput } from '../../types/schoolAssessmentTypes';
+import { formatAptitudeDomain, formatInterestDomain } from '../../utils/schoolAssessmentFormatters';
 
 const SectionContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -31,7 +31,7 @@ const HeaderCard = styled(Card)(({ theme }) => ({
   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
 }));
 
-const ScoreCard = styled(Card)(({ theme }) => ({
+const ScoreCard = styled(Card)(({  }) => ({
   height: '100%',
   transition: 'all 0.3s ease',
   '&:hover': {
@@ -70,11 +70,7 @@ const TestScoreInterpretationSection: React.FC<TestScoreInterpretationSectionPro
   data,
   confidence
 }) => {
-  const aptitudeChartData = data.score_summaries.dbda_top_aptitudes.map(apt => ({
-    id: formatAptitudeDomain(apt.domain),
-    label: formatAptitudeDomain(apt.domain),
-    value: apt.score
-  }));
+ 
 
   const interestChartData = data.score_summaries.cii_top_interests.map(interest => ({
     id: formatInterestDomain(interest.domain),
@@ -82,7 +78,6 @@ const TestScoreInterpretationSection: React.FC<TestScoreInterpretationSectionPro
     value: interest.score
   }));
 
-  const COLORS = ['#146C94', '#19A7CE', '#AFD3E2', '#F6F1F1', '#FF6B6B', '#4ECDC4'];
 
   return (
     <SectionContainer>
@@ -133,7 +128,7 @@ const TestScoreInterpretationSection: React.FC<TestScoreInterpretationSectionPro
               <PieChart
                 series={[{
                   data: interestChartData,
-                  highlightScope: { faded: 'global', highlighted: 'item' },
+                  // highlightScope: { faded: 'global', highlighted: 'item' },
                   faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
                 }]}
                 width={800}

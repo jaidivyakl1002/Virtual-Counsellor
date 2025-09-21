@@ -65,6 +65,7 @@ const ExpandableSection: React.FC<ExpandableSectionProps> = ({
   const [expanded, setExpanded] = useState(defaultExpanded);
 
   const handleChange = (event: React.SyntheticEvent, isExpanded: boolean) => {
+    console.log(event)
     setExpanded(isExpanded);
     onExpand?.(isExpanded);
   };

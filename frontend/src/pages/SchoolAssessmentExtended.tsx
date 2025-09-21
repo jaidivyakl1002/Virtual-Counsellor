@@ -15,9 +15,9 @@ import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import AssessmentSection from '../components/school-assessment/AssessmentSection';
 import AssessmentNavigation from '../components/school-assessment/AssessmentNavigation';
-import ProgressIndicator from '../components/school-assessment/ProgressIndicator';
+// import ProgressIndicator from '../components/school-assessment/ProgressIndicator';
 import BasicInfoForm from '../components/school-assessment/BasicInfoForm';
-import { mockAssessmentQuestions } from '../data/schoolAssessmentMockData';
+import { mockAssessmentQuestions } from '../datamock/schoolAssessmentMockData';
 import { AssessmentSection as AssessmentSectionEnum, AnswerOption, SameDifferentOption } from '../types/assessmentEnums';
 import { AssessmentFormData, AssessmentState, BasicInfoFormData, BasicInfoFormErrors } from '../types/assessmentSchemas';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -27,7 +27,7 @@ const PageContainer = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.grey[50]
 }));
 
-const HeaderSection = styled(Box)(({ theme }) => ({
+const HeaderSection = styled(Box)(({  }) => ({
   background: 'linear-gradient(135deg, #E3F2FD 0%, #E0F7FA 100%)',
   padding: '80px 0 60px',
   textAlign: 'center'
@@ -38,7 +38,7 @@ const ContentContainer = styled(Container)(({ theme }) => ({
   paddingBottom: theme.spacing(4)
 }));
 
-const AssessmentContainer = styled(Box)(({ theme }) => ({
+const AssessmentContainer = styled(Box)(({  }) => ({
   minHeight: '60vh',
   position: 'relative'
 }));
@@ -197,12 +197,12 @@ const SchoolAssessmentExtended: React.FC = () => {
     }));
 
     // Clear error for this field
-    if (basicInfoErrors[field]) {
-      setBasicInfoErrors(prev => ({
-        ...prev,
-        [field]: undefined
-      }));
-    }
+    // if (basicInfoErrors[field]) {
+    //   setBasicInfoErrors(prev => ({
+    //     ...prev,
+    //     [field]: undefined
+    //   }));
+    // }
   }, [basicInfoErrors]);
 
   // Handle basic info form submission
@@ -243,7 +243,7 @@ const SchoolAssessmentExtended: React.FC = () => {
     const currentAnswers = assessmentState.answers[assessmentState.currentSection];
     
     return currentQuestions.every(question => 
-      currentAnswers[question.id] !== undefined && currentAnswers[question.id] !== ''
+      currentAnswers[question.id] !== undefined
     );
   }, [assessmentState.currentSection, assessmentState.answers]);
 
@@ -315,7 +315,7 @@ const SchoolAssessmentExtended: React.FC = () => {
       const questions = mockAssessmentQuestions[section];
       const answers = assessmentState.answers[section];
       return questions.every(question => 
-        answers[question.id] !== undefined && answers[question.id] !== ''
+        answers[question.id] !== undefined
       );
     });
 
@@ -371,11 +371,7 @@ const SchoolAssessmentExtended: React.FC = () => {
     }
   };
 
-  const completedSections = new Set(
-    Object.entries(assessmentState.sectionProgress)
-      .filter(([_, isComplete]) => isComplete)
-      .map(([section, _]) => section as AssessmentSectionEnum)
-  );
+
 
   return (
     <PageContainer>
@@ -413,12 +409,12 @@ const SchoolAssessmentExtended: React.FC = () => {
 
       <ContentContainer maxWidth="lg">
         <Stack spacing={4}>
-          <ProgressIndicator
+          {/* <ProgressIndicator
             currentStep={assessmentState.currentStep}
             currentSection={assessmentState.currentSection}
             completedSections={completedSections}
             basicInfoComplete={assessmentState.basicInfoComplete}
-          />
+          /> */}
 
           {assessmentState.currentStep === 'assessment' && (
             <BackButton

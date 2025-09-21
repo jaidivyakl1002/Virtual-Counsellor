@@ -11,7 +11,7 @@ import DataObjectOutlinedIcon from '@mui/icons-material/DataObjectOutlined';
 import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined';
 import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined';
 
-const ContentSection = styled(Box)(({ theme }) => ({
+const ContentSection = styled(Box)(({  }) => ({
   padding: '80px 0'
 }));
 

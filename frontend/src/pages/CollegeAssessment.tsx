@@ -28,7 +28,7 @@ const PageContainer = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.grey[50]
 }));
 
-const HeaderSection = styled(Box)(({ theme }) => ({
+const HeaderSection = styled(Box)(({  }) => ({
   background: 'linear-gradient(135deg, #E3F2FD 0%, #E0F7FA 100%)',
   padding: '80px 0 60px',
   textAlign: 'center'
@@ -91,7 +91,7 @@ const CollegeAssessment: React.FC = () => {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitSuccess,] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
 
   const validateForm = useCallback((): boolean => {

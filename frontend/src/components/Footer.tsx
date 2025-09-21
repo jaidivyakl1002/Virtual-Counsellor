@@ -6,17 +6,17 @@ import XIcon from '@mui/icons-material/X';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import FacebookIcon from '@mui/icons-material/Facebook';
 
-const FooterContainer = styled(Box)(({ theme }) => ({
+const FooterContainer = styled(Box)(({  }) => ({
   backgroundColor: '#1E293B',
   color: 'white',
   padding: '80px 0 40px'
 }));
 
-const FooterSection = styled(Stack)(({ theme }) => ({
+const FooterSection = styled(Stack)(({  }) => ({
   alignItems: 'flex-start'
 }));
 
-const FooterLink = styled(Link)(({ theme }) => ({
+const FooterLink = styled(Link)(({  }) => ({
   color: 'rgba(255, 255, 255, 0.8)',
   textDecoration: 'none',
   fontSize: '1rem',
@@ -28,7 +28,7 @@ const FooterLink = styled(Link)(({ theme }) => ({
   transition: 'color 0.3s ease'
 }));
 
-const SocialIcon = styled(Box)(({ theme }) => ({
+const SocialIcon = styled(Box)(({  }) => ({
   width: '44px',
   height: '44px',
   borderRadius: '50%',
@@ -48,7 +48,7 @@ const SocialIcon = styled(Box)(({ theme }) => ({
   }
 }));
 
-const Logo = styled(Stack)(({ theme }) => ({
+const Logo = styled(Stack)(({  }) => ({
   alignItems: 'flex-start',
   marginBottom: '24px',
   '& .MuiSvgIcon-root': {

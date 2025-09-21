@@ -59,7 +59,7 @@ const SuitabilityChip = styled(Chip)<{ score: number }>(({ theme, score }) => ({
     theme.palette.error.contrastText
 }));
 
-const SelectButton = styled(Button)(({ theme }) => ({
+const SelectButton = styled(Button)(({  }) => ({
   background: 'linear-gradient(135deg, #146C94 0%, #19A7CE 100%)',
   color: 'white',
   fontWeight: 600,

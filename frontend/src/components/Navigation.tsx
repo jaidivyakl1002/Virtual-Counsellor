@@ -36,12 +36,12 @@ const NavButton = styled(Button)(({ theme }) => ({
   }
 }));
 
-const LogoLink = styled(Link)(({ theme }) => ({
+const LogoLink = styled(Link)(({  }) => ({
   textDecoration: 'none',
   color: 'inherit'
 }));
 
-const CTAButton = styled(Button)(({ theme }) => ({
+const CTAButton = styled(Button)(({  }) => ({
   background: 'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%)',
   color: 'white',
   fontWeight: 600,
@@ -81,27 +81,31 @@ const Navigation: React.FC = () => {
           </LogoLink>
           
           <Stack direction="row" spacing={4} alignItems="center">
-            <NavButton 
-              component={Link} 
-              to="/school"
+            <Link to='/school'>
+             <NavButton 
+              
               className={location.pathname === '/school' ? 'active' : ''}
             >
               For Students
             </NavButton>
-            <NavButton 
-              component={Link} 
-              to="/college"
+            </Link>
+           <Link to='/college'>
+          <NavButton 
+            
               className={location.pathname === '/college' ? 'active' : ''}
             >
               For College
             </NavButton>
-            <NavButton 
-              component={Link} 
-              to="/professional"
+           </Link>
+            
+           <Link to='/professional'>
+             <NavButton 
+             
               className={location.pathname === '/professional' ? 'active' : ''}
             >
               For Professionals
             </NavButton>
+           </Link>
             <CTAButton onClick={handleStartAssessment}>
               Start Your Assessment
             </CTAButton>

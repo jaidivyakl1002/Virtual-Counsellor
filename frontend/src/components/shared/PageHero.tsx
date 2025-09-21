@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Typography, Button, Stack, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-const HeroContainer = styled(Box)(({ theme }) => ({
+const HeroContainer = styled(Box)(({  }) => ({
   background: 'linear-gradient(135deg, #E3F2FD 0%, #E0F7FA 100%)',
   padding: '120px 0 80px',
   minHeight: '60vh',
@@ -10,7 +10,7 @@ const HeroContainer = styled(Box)(({ theme }) => ({
   alignItems: 'center'
 }));
 
-const HeroButton = styled(Button)(({ theme }) => ({
+const HeroButton = styled(Button)(({  }) => ({
   background: 'linear-gradient(135deg, #146C94 0%, #19A7CE 100%)',
   color: 'white',
   fontWeight: 600,

@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Typography, Button, Stack, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-const CTAContainer = styled(Box)(({ theme }) => ({
+const CTAContainer = styled(Box)(({  }) => ({
   background: 'linear-gradient(135deg, #146C94 0%, #19A7CE 100%)',
   padding: '80px 0',
   position: 'relative',

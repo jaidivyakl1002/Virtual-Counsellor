@@ -21,7 +21,6 @@ import CollegeScholarshipSection from '../components/school-assessment/CollegeSc
 import ActionItemsSection from '../components/school-assessment/ActionItemsSection';
 import ExportControls from '../components/shared/ExportControls';
 import ConfidenceIndicator from '../components/shared/ConfidenceIndicator';
-import ErrorBoundary from '../components/shared/ErrorBoundary';
 import { SchoolAssessmentResultsProps } from '../types/schoolAssessmentTypes';
 import { formatProcessingTime, formatDate } from '../utils/assessmentFormatters';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
@@ -97,7 +96,6 @@ const SchoolAssessmentResults: React.FC<SchoolAssessmentResultsProps> = ({
   onDownloadReport,
   onShareResults,
   onSaveResults,
-  onBackToAssessment,
   onStartImplementation,
   isLoading = false,
   error
@@ -114,6 +112,7 @@ const SchoolAssessmentResults: React.FC<SchoolAssessmentResultsProps> = ({
   const [activeTab, setActiveTab] = useState(0);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    console.log(event)
     setActiveTab(newValue);
   };
 
@@ -198,7 +197,7 @@ const SchoolAssessmentResults: React.FC<SchoolAssessmentResultsProps> = ({
   }
 
   return (
-    <ErrorBoundary>
+    
       <PageContainer>
         <Navigation />
         
@@ -380,7 +379,7 @@ const SchoolAssessmentResults: React.FC<SchoolAssessmentResultsProps> = ({
 
         <Footer />
       </PageContainer>
-    </ErrorBoundary>
+    
   );
 };
 

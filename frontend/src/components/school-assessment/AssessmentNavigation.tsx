@@ -22,7 +22,7 @@ const NavigationContainer = styled(Box)(({ theme }) => ({
   boxShadow: '0 -4px 16px rgba(0, 0, 0, 0.08)'
 }));
 
-const NavButton = styled(Button)(({ theme }) => ({
+const NavButton = styled(Button)(({  }) => ({
   borderRadius: '12px',
   padding: '12px 24px',
   fontSize: '1rem',

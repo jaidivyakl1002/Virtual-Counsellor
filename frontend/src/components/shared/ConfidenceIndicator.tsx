@@ -10,7 +10,7 @@ const ConfidenceContainer = styled(Box)(({ theme }) => ({
   gap: theme.spacing(2)
 }));
 
-const ProgressContainer = styled(Box)(({ theme }) => ({
+const ProgressContainer = styled(Box)(({  }) => ({
   position: 'relative',
   display: 'inline-flex',
   alignItems: 'center',

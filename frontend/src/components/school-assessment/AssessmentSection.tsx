@@ -10,7 +10,7 @@ import { QuestionSectionProps } from '../../types/assessmentSchemas';
 import { AssessmentSection as AssessmentSectionEnum } from '../../types/assessmentEnums';
 import { AnswerOption, SameDifferentOption } from '../../types/assessmentEnums';
 
-const SectionContainer = styled(Box)(({ theme }) => ({
+const SectionContainer = styled(Box)(({  }) => ({
   width: '100%',
   maxWidth: '800px',
   margin: '0 auto'

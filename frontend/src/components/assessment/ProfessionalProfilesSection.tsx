@@ -71,7 +71,7 @@ const ProfessionalProfilesSection: React.FC<ProfessionalProfilesSectionProps> = 
             placeholder="Enter your GitHub username or URL (e.g., john-doe or github.com/john-doe)"
             value={githubProfile}
             onChange={(e) => onGithubChange(e.target.value)}
-            error={!!errors?.githubProfile || (githubProfile && !validateGithubUrl(githubProfile))}
+            // error={!!errors?.githubProfile || (githubProfile && !validateGithubUrl(githubProfile))}
             helperText={
               errors?.githubProfile || 
               (githubProfile && !validateGithubUrl(githubProfile) 
@@ -98,7 +98,7 @@ const ProfessionalProfilesSection: React.FC<ProfessionalProfilesSectionProps> = 
             placeholder="Enter your LinkedIn profile URL (e.g., linkedin.com/in/john-doe)"
             value={linkedinProfile}
             onChange={(e) => onLinkedinChange(e.target.value)}
-            error={!!errors?.linkedinProfile || (linkedinProfile && !validateLinkedinUrl(linkedinProfile))}
+            // error={!!errors?.linkedinProfile || (linkedinProfile && !validateLinkedinUrl(linkedinProfile))}
             helperText={
               errors?.linkedinProfile || 
               (linkedinProfile && !validateLinkedinUrl(linkedinProfile) 

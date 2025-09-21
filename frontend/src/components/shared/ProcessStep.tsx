@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography, Stack, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-const StepNumber = styled(Box)(({ theme, stepColor }: { theme: any; stepColor: string }) => ({
+const StepNumber = styled(Box)(({  stepColor }: { stepColor: string }) => ({
   width: '64px',
   height: '64px',
   borderRadius: '50%',

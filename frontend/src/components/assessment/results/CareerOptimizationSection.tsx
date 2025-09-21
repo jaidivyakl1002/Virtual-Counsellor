@@ -11,7 +11,7 @@ import {
   ListItemText,
   ListItemIcon,
   LinearProgress,
-  Divider
+  
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LocationSearchingOutlinedIcon from '@mui/icons-material/LocationSearchingOutlined';

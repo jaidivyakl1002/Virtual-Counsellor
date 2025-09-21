@@ -11,7 +11,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Divider
+  
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';

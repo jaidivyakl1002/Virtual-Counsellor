@@ -135,7 +135,7 @@ const SkillDevelopmentSection: React.FC<SkillDevelopmentSectionProps> = ({
                   <LinearProgress
                     variant="determinate"
                     value={(getSkillLevel(level) / 4) * 100}
-                    color={getSkillColor(level)}
+                    // color={getSkillColor(level)}
                     sx={{ height: 6, borderRadius: 3 }}
                   />
                 </Box>

@@ -9,7 +9,6 @@ import SchoolPage from './pages/School';
 import CollegePage from './pages/College';
 import ProfessionalsPage from './pages/Professional';
 import CollegeAssessment from './pages/CollegeAssessment';
-import SchoolAssessment from './pages/SchoolAssessment';
 import SchoolAssessmentExtended from './pages/SchoolAssessmentExtended';
 import AssessmentResultsPage from './pages/AssessmentResultsPage';
 import SchoolAssessmentResultsPage from './pages/SchoolAssessmentResultsPage';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Typography, Stack, Box, Grid } from '@mui/material';
+import { Container, Typography, Box, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
@@ -12,7 +12,7 @@ import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined';
 import CrisisAlertOutlinedIcon from '@mui/icons-material/CrisisAlertOutlined';
 import KeyboardArrowRightOutlinedIcon from '@mui/icons-material/KeyboardArrowRightOutlined';
 
-const ContentSection = styled(Box)(({ theme }) => ({
+const ContentSection = styled(Box)(({  }) => ({
   padding: '80px 0'
 }));
 
@@ -21,7 +21,7 @@ const FeatureSection = styled(Box)(({ theme }) => ({
   padding: '80px 0'
 }));
 
-const ProcessSection = styled(Box)(({ theme }) => ({
+const ProcessSection = styled(Box)(({  }) => ({
   padding: '80px 0'
 }));
 

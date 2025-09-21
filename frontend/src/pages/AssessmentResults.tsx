@@ -78,11 +78,9 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({
   showExportOptions = true,
   enableActionTracking = true,
   onActionItemClick,
-  onOpportunityApply,
   onDownloadReport,
   onShareResults,
   onSaveResults,
-  onBackToAssessment,
   onStartImplementation,
   isLoading = false,
   error
@@ -90,6 +88,7 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({
   const [activeTab, setActiveTab] = useState(0);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    console.log(event)
     setActiveTab(newValue);
   };
 
@@ -274,7 +273,7 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({
           <OpportunityMatchingSection
             data={outputs.agent_outputs.opportunity_matcher.data}
             confidence={outputs.agent_outputs.opportunity_matcher.confidence}
-            onOpportunityApply={onOpportunityApply}
+            // onOpportunityApply={onOpportunityApply}
           />
         </TabPanel>
 

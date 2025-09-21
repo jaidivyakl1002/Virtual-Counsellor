@@ -22,7 +22,6 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import SchoolIcon from '@mui/icons-material/School';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import SaveIcon from '@mui/icons-material/Save';
 import ConfidenceIndicator from '../shared/ConfidenceIndicator';
@@ -86,7 +85,7 @@ const BookmarkButton = styled(IconButton)(({ theme }) => ({
   }
 }));
 
-const SaveButton = styled(Button)(({ theme }) => ({
+const SaveButton = styled(Button)(({  }) => ({
   background: 'linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%)',
   color: 'white',
   fontWeight: 600,

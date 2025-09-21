@@ -16,7 +16,7 @@ import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlin
 import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined';
 import { useNavigate } from 'react-router-dom';
 
-const StyledDialog = styled(Dialog)(({ theme }) => ({
+const StyledDialog = styled(Dialog)(({  }) => ({
   '& .MuiDialog-paper': {
     borderRadius: '24px',
     padding: 0,
@@ -33,7 +33,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
   }
 }));
 
-const ModalHeader = styled(Box)(({ theme }) => ({
+const ModalHeader = styled(Box)(({  }) => ({
   position: 'relative',
   padding: '32px 32px 24px',
   textAlign: 'center',
