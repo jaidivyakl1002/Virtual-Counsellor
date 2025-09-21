@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Typography, Box, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import PageHero from '../components/shared/PageHero';
@@ -21,6 +22,12 @@ const ProcessSection = styled(Box)(({ theme }) => ({
 }));
 
 const SchoolPage: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleStartAssessment = () => {
+    navigate('/school_test');
+  };
+
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
       <Navigation />
@@ -29,6 +36,7 @@ const SchoolPage: React.FC = () => {
         title="Choose Your Academic Stream with Confidence"
         subtitle="Navigate high school with confidence. Our AI analyzes your aptitude and interests to recommend academic streams and future career possibilities."
         buttonText="Start Your Assessment"
+        onButtonClick={handleStartAssessment}
       />
 
       <ContentSection>
@@ -118,6 +126,7 @@ const SchoolPage: React.FC = () => {
         title="Ready to Choose Your Academic Path?"
         subtitle="Join thousands of students who have found their perfect academic stream with our AI-powered guidance."
         buttonText="Start Your Free Assessment"
+        onButtonClick={handleStartAssessment}
       />
 
       <Footer />
