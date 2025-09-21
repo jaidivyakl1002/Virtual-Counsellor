@@ -10,6 +10,7 @@ import CollegePage from './pages/College';
 import ProfessionalsPage from './pages/Professional';
 import CollegeAssessment from './pages/CollegeAssessment';
 import SchoolAssessment from './pages/SchoolAssessment';
+import SchoolAssessmentExtended from './pages/SchoolAssessmentExtended';
 import AssessmentResultsPage from './pages/AssessmentResultsPage';
 import SchoolAssessmentResultsPage from './pages/SchoolAssessmentResultsPage';
 
@@ -33,7 +34,7 @@ const App: React.FC = () => {
             <Route path="/school" element={<SchoolPage />} />
             <Route path="/college" element={<CollegePage />} />
             <Route path="/college_test" element={<CollegeAssessment />} />
-            <Route path="/school_test" element={<SchoolAssessment />} />
+            <Route path="/school_test" element={<SchoolAssessmentExtended />} />
             <Route path="/assessment_results" element={<AssessmentResultsPage/>} />
             <Route path="/school_assessment_results" element={<SchoolAssessmentResultsPage/>} />
             <Route path="/professional" element={<ProfessionalsPage />} />
