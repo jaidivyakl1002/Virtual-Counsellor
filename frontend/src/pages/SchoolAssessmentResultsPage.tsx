@@ -30,7 +30,7 @@ const SchoolAssessmentResultsPage: React.FC = () => {
         }
 
         // Try to fetch real data from API
-        const response = await fetch(`http://localhost:8000/api/status/${sessionId}`);
+        const response = await fetch(`https://my-service-prod-1015057250826.us-central1.run.app/api/status/${sessionId}`);
         
         if (!response.ok) {
           throw new Error(`Failed to fetch school assessment results: ${response.status}`);

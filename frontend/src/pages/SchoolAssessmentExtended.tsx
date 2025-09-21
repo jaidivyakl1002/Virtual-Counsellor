@@ -338,7 +338,7 @@ const SchoolAssessmentExtended: React.FC = () => {
       };
 
       // Simulate API call for school assessment
-      const response = await fetch('http://localhost:8000/api/school-students', {
+      const response = await fetch('https://my-service-prod-1015057250826.us-central1.run.app/api/school-students', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
