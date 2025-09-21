@@ -659,7 +659,10 @@ async def analyze_college_student_with_resume(
         update_session_status(session_id_final, SessionStatus.PENDING)
 
         # Set default message
-        initial_message_final ="I want comprehensive career guidance and skill development recommendations based on my profile."
+        initial_message_final = (
+            json.loads(initial_message)
+            or "I want comprehensive career guidance and skill development recommendations based on my profile."
+        )
 
         logger.info(
             {
