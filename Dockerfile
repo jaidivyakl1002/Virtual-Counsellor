@@ -5,7 +5,7 @@ COPY frontend/package*.json ./
 RUN npm install
 
 COPY frontend/ .
-RUN npm run build
+RUN npm run dev
 
 FROM python:3.11-slim
 
