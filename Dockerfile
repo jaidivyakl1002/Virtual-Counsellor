@@ -11,8 +11,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY server/ ./server
 
-COPY --from=frontend-builder /app/frontend/dist ./static
-
 EXPOSE 8080
 
 CMD ["uvicorn", "server.run:app", "--host", "0.0.0.0", "--port", "8080"]
