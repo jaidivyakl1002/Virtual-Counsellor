@@ -5,30 +5,64 @@ from pydantic import BaseModel, Field
 import json
 from datetime import datetime
 
+
 class MarketTrendOutput(BaseModel):
     """Output structure for market trend analysis"""
-    domain_specific_trends: Dict[str, Dict[str, Any]] = Field(description="Trends for each specific domain")
-    cross_domain_opportunities: List[Dict[str, Any]] = Field(description="Opportunities spanning multiple domains")
-    emerging_intersections: List[Dict[str, Any]] = Field(description="New field intersections and hybrid roles")
-    market_timing_insights: Dict[str, Any] = Field(description="Timing analysis for market entry")
-    skill_evolution_patterns: Dict[str, List[str]] = Field(description="How skills are evolving in each domain")
+
+    domain_specific_trends: Dict[str, Dict[str, Any]] = Field(
+        description="Trends for each specific domain"
+    )
+    cross_domain_opportunities: List[Dict[str, Any]] = Field(
+        description="Opportunities spanning multiple domains"
+    )
+    emerging_intersections: List[Dict[str, Any]] = Field(
+        description="New field intersections and hybrid roles"
+    )
+    market_timing_insights: Dict[str, Any] = Field(
+        description="Timing analysis for market entry"
+    )
+    skill_evolution_patterns: Dict[str, List[str]] = Field(
+        description="How skills are evolving in each domain"
+    )
+
 
 class MarketTrendAnalyzerSubAgent:
     """Sub-agent for analyzing market trends across the domain hierarchy"""
-    
+
     def __init__(self, llm_model):
         self.llm_model = llm_model
         self.output_parser = JsonOutputParser(pydantic_object=MarketTrendOutput)
-        
+
         # Market trend knowledge base
         self.trend_indicators = {
-            "growth_signals": ["job posting increases", "startup funding", "technology adoption", "regulatory changes"],
-            "decline_signals": ["automation threats", "outsourcing trends", "market saturation", "skill obsolescence"],
-            "stability_signals": ["consistent demand", "established workflows", "mature industry", "steady growth"]
+            "growth_signals": [
+                "job posting increases",
+                "startup funding",
+                "technology adoption",
+                "regulatory changes",
+            ],
+            "decline_signals": [
+                "automation threats",
+                "outsourcing trends",
+                "market saturation",
+                "skill obsolescence",
+            ],
+            "stability_signals": [
+                "consistent demand",
+                "established workflows",
+                "mature industry",
+                "steady growth",
+            ],
         }
-        
+
         self.prompt = PromptTemplate(
-            input_variables=["specific_domains", "intermediate_domains", "broad_categories", "domain_hierarchy", "analysis_date"],
+            input_variables=[
+                "specific_domains",
+                "intermediate_domains",
+                "broad_categories",
+                "domain_hierarchy",
+                "analysis_date",
+            ],
             template="""You are a Market Trend Analyst specializing in career opportunity forecasting across domain hierarchies.
 
 DOMAIN ANALYSIS TARGETS:
@@ -77,111 +111,122 @@ Focus on actionable insights for a college student planning their career develop
 
 {format_instructions}
 
-Provide comprehensive multi-level trend analysis connecting specific domains to broader market realities."""
+Provide comprehensive multi-level trend analysis connecting specific domains to broader market realities.""",
         )
-    
-    def analyze_trends(self, specific_domains: List[str], intermediate_domains: List[str], 
-                      broad_categories: List[str], domain_hierarchy: Dict[str, Any]) -> Dict[str, Any]:
+
+    def analyze_trends(
+        self,
+        specific_domains: List[str],
+        intermediate_domains: List[str],
+        broad_categories: List[str],
+        domain_hierarchy: Dict[str, Any],
+    ) -> Dict[str, Any]:
         """Analyze market trends across the domain hierarchy"""
-        
+
         prompt_input = {
             "specific_domains": ", ".join(specific_domains),
             "intermediate_domains": ", ".join(intermediate_domains),
             "broad_categories": ", ".join(broad_categories),
             "domain_hierarchy": json.dumps(domain_hierarchy, indent=2),
             "analysis_date": datetime.now().strftime("%Y-%m-%d"),
-            "format_instructions": self.output_parser.get_format_instructions()
+            "format_instructions": self.output_parser.get_format_instructions(),
         }
-        
+
         formatted_prompt = self.prompt.format(**prompt_input)
         llm_response = self.llm_model.invoke(formatted_prompt)
         result = self._parse_llm_response(llm_response)
-        
+
         # Add computational trend scoring
         result["trend_scoring"] = self._calculate_trend_scores(result)
-        
+
         # Add opportunity prioritization
         result["opportunity_prioritization"] = self._prioritize_opportunities(result)
-        
+
         return result
-    
+
     def _calculate_trend_scores(self, trend_result: Dict) -> Dict[str, float]:
         """Calculate quantitative trend scores for prioritization"""
         scores = {}
-        
+
         domain_trends = trend_result.get("domain_specific_trends", {})
         for domain, trends in domain_trends.items():
             if isinstance(trends, dict):
                 # Simple scoring based on growth indicators
                 growth_score = 0.5  # Base score
-                
+
                 trend_text = str(trends).lower()
                 for signal in self.trend_indicators["growth_signals"]:
                     if signal in trend_text:
                         growth_score += 0.1
-                
+
                 for signal in self.trend_indicators["decline_signals"]:
                     if signal in trend_text:
                         growth_score -= 0.15
-                
+
                 scores[domain] = max(0.1, min(1.0, growth_score))
-        
+
         return scores
-    
+
     def _prioritize_opportunities(self, trend_result: Dict) -> List[Dict[str, Any]]:
         """Prioritize opportunities based on trend analysis"""
         opportunities = []
-        
+
         # Extract cross-domain opportunities
         cross_domain = trend_result.get("cross_domain_opportunities", [])
         for opp in cross_domain:
             if isinstance(opp, dict):
-                opportunities.append({
-                    "opportunity": opp,
-                    "type": "cross_domain",
-                    "priority_score": 0.8  # High priority for cross-domain
-                })
-        
-        # Extract emerging intersections  
+                opportunities.append(
+                    {
+                        "opportunity": opp,
+                        "type": "cross_domain",
+                        "priority_score": 0.8,  # High priority for cross-domain
+                    }
+                )
+
+        # Extract emerging intersections
         emerging = trend_result.get("emerging_intersections", [])
         for opp in emerging:
             if isinstance(opp, dict):
-                opportunities.append({
-                    "opportunity": opp,
-                    "type": "emerging",
-                    "priority_score": 0.9  # Highest priority for emerging
-                })
-        
+                opportunities.append(
+                    {
+                        "opportunity": opp,
+                        "type": "emerging",
+                        "priority_score": 0.9,  # Highest priority for emerging
+                    }
+                )
+
         # Sort by priority score
         opportunities.sort(key=lambda x: x["priority_score"], reverse=True)
-        
+
         return opportunities[:10]  # Top 10 opportunities
-    
+
     def _parse_llm_response(self, response) -> Dict[str, Any]:
         """Parse LLM response with error handling"""
         content = response.content.strip()
-        
+
         if content.startswith("```json"):
             content = content[7:]
         elif content.startswith("```"):
             content = content[3:]
-        
+
         if content.endswith("```"):
             content = content[:-3]
-        
+
         content = content.strip()
-        
+
         try:
             return json.loads(content)
         except json.JSONDecodeError as json_error:
             try:
                 parsed_output = self.output_parser.parse(content)
-                if hasattr(parsed_output, 'dict'):
+                if hasattr(parsed_output, "dict"):
                     return parsed_output.dict()
                 elif isinstance(parsed_output, dict):
                     return parsed_output
                 else:
-                    raise ValueError(f"Output parser returned unexpected type: {type(parsed_output)}")
+                    raise ValueError(
+                        f"Output parser returned unexpected type: {type(parsed_output)}"
+                    )
             except Exception as parser_error:
                 raise ValueError(
                     f"Failed to parse market trend analysis response. "
