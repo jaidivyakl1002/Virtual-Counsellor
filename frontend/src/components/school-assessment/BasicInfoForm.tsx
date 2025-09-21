@@ -20,7 +20,11 @@ import { BasicInfoFormData, BasicInfoFormErrors } from '../../types/assessmentSc
 const FormContainer = styled(Container)(({ theme }) => ({
   maxWidth: '800px',
   padding: theme.spacing(4),
-  margin: '0 auto'
+  margin: '0 auto',
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center'
 }));
 
 const FormSection = styled(Paper)(({ theme }) => ({
@@ -125,8 +129,9 @@ const BasicInfoForm: React.FC<BasicInfoFormProps> = ({
   };
 
   return (
-    <FormContainer maxWidth="md">
-      <Stack spacing={4}>
+    <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', px: 2 }}>
+      <FormContainer maxWidth="md">
+        <Stack spacing={4} sx={{ width: '100%', maxWidth: '800px' }}>
         {/* Basic Information */}
         <FormSection elevation={1}>
           <Typography variant="h5" sx={{ fontWeight: 600, mb: 3, color: 'primary.main' }}>
@@ -317,8 +322,9 @@ const BasicInfoForm: React.FC<BasicInfoFormProps> = ({
             {isSubmitting ? 'Saving Information...' : 'Continue to Assessment'}
           </SubmitButton>
         </Box>
-      </Stack>
-    </FormContainer>
+        </Stack>
+      </FormContainer>
+    </Box>
   );
 };
 

@@ -84,8 +84,8 @@ const initialFormData: AssessmentFormData = {
 
 const initialBasicInfoData: BasicInfoFormData = {
   studentName: 'Sarthak',
-  currentGrade: '9th grade',
-  currentStream: 'Computer Science',
+  currentGrade: '9th Grade',
+  currentStream: 'Science',
   subjects: ['Mathematics', 'Software Development','Web Development'],
   academicPerformance: '9.5 GPA',
   interests: ['AI','ML','Blockchain'],
@@ -438,13 +438,15 @@ const SchoolAssessmentExtended: React.FC = () => {
           )}
 
           {assessmentState.currentStep === 'basic-info' ? (
-            <BasicInfoForm
-              formData={assessmentState.basicInfoData}
-              errors={basicInfoErrors}
-              onInputChange={handleBasicInfoChange}
-              onSubmit={handleBasicInfoSubmit}
-              isSubmitting={false}
-            />
+            <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+              <BasicInfoForm
+                formData={assessmentState.basicInfoData}
+                errors={basicInfoErrors}
+                onInputChange={handleBasicInfoChange}
+                onSubmit={handleBasicInfoSubmit}
+                isSubmitting={false}
+              />
+            </Box>
           ) : (
             <AssessmentContainer>
               <AssessmentSection
