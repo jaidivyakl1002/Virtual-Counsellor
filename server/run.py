@@ -174,7 +174,8 @@ app.add_middleware(
         "http://localhost:3000",
         "http://localhost:8000",
         "http://localhost:5173",
-        "https://my-service-prod-1015057250826.us-central1.run.app"
+        "https://my-service-prod-1015057250826.us-central1.run.app",
+        "https://virtual-counsellor.netlify.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -658,10 +659,7 @@ async def analyze_college_student_with_resume(
         update_session_status(session_id_final, SessionStatus.PENDING)
 
         # Set default message
-        initial_message_final = (
-            json.loads(initial_message)
-            or "I want comprehensive career guidance and skill development recommendations based on my profile."
-        )
+        initial_message_final ="I want comprehensive career guidance and skill development recommendations based on my profile."
 
         logger.info(
             {
